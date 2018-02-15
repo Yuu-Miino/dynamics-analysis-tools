@@ -11,11 +11,11 @@ DIST    = ../bin/
 all:
 	@echo "No target is set."
 
-pp:pp.o DynamicsPP.o ODE.o Event.o
-	$(CC) -o $(DIST)$@ $(OBJDIR)$^ 
+pp: pp.o DynamicsPP.o ODE.o Event.o
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 
 .cpp.o:
-	$(CC) -o $(INCLUDE) $@ -c $<
+	$(CC) $(INCLUDE) -c $<
 
 clean:
 	rm -f *~ *.o

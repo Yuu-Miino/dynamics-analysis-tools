@@ -37,16 +37,17 @@ public:
   }   
 
   // df/dt definition
+  void func(double* out, double* in, double tin);
+
+  // Print profile
+  void printProfile(int retFlag=0);
+  void printStd(const char* in=NULL);
+
+  // Optional
   double f1(double xin);
   double f2(double xin);
 
-  void func(double* out, double* in, double tin);
-
   void freshX0();
-
-  // Print profile
-  void printProfile(int retFlag);
-  void printStd(const char* in=NULL);
 };
 
 #endif
