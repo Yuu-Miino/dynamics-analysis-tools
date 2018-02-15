@@ -1,17 +1,21 @@
 .SUFFIXES: .cpp .hpp .o
 
-CC     = g++ -Wall
-MEMORY = -fsanitize=address -fno-omit-frame-pointer
-OBJS   = Dynamics.o ODE.o Event.o
-DIST   = ../bin/
-
+CC      = g++ -Wall
+LIBS    = -lm
 INCLUDE = -I/usr/local/include/ -I../include/
+MEMORY  = -fsanitize=address -fno-omit-frame-pointer
+DIST    = ../bin/
+
+.PHONY: all clean
+
+all:
+	@echo "No target is set."
 
 pp:pp.o DynamicsPP.o ODE.o Event.o
-	$(CC) -o $(DIST)$@ $^ 
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ 
 
 .cpp.o:
-	$(CC) -c $(INCLUDE) $<
+	$(CC) -o $(INCLUDE) $@ -c $<
 
 clean:
 	rm -f *~ *.o
