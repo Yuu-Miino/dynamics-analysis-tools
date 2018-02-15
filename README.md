@@ -1,6 +1,6 @@
 # pp = Phase Portrait
 
-This program computes the solution orbit of a hybrid system
+This program computes the solution orbit of **a hybrid system**
 which includes dynamical systems and a finite state machine.
 The implemented method for numerical integration is RK4.
 
