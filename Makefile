@@ -1,7 +1,10 @@
+SRC = ./src/
+
 all:
 
 pp:
-	make -C src pp
+	make -C $(SRC) $@
 
 clean:
 	rm -f *~
+	make -C $(SRC) $@
