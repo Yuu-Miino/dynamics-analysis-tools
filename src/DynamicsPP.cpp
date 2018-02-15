@@ -3,31 +3,34 @@
 #include <iostream>
 
 Dynamics::Dynamics(string namein, char* in){
-  
-  name = namein;
-  ifstream ifs(in);
-  DIM_state = 2;
-  DIM = 2;
+  name = namein;    // Name of instance
+  ifstream ifs(in); // Name of input file
 
-  x0 = new double[DIM]();
-  x = new double[DIM]();
-  t = new double;
+  // Dimensions
+  DIM_state = 2;    // Number of state variables
+  DIM       = 2;    // Number of all variables
+
+  x0 = new double[DIM](); // Initial condition
+  x  = new double[DIM](); // Current state(s)
   
+  // Load parameters and initial conditions from input file
   if(!ifs.fail()){
-    ifs>>k>>b0>>b>>sl>>sr>>x0[0]>>x0[1];
-  }else if(in == NULL){
-    k = 0.2;  b  = 0.1;  b0 = 0.1;
-    x0[0] = 0.3238; x0[1] = -1.292;
-    sl = 3; sr = 3;
+    ifs>>
+      k>>b0>>b>>sl>>sr>>
+      x0[0]>>x0[1];
   }else{
-    cerr<<"error: file name incorrect"<<in<<endl;
+    cerr<<"error: file name incorrect ["<<in<<"]"<<endl;
     exit(-1);
   }
-  //s = 3;
-  tstart = 0.0; tend = 2.0*PI; tfinal = tstart;
+  
+  // time interval
+  t  = new double; // Current time (mod tend)
+  tstart = 0.0;    // Start time
+  tend   = 2.0*PI; // End time
+  tfinal = tstart; // Temporary time to store the total time
 
-  event = new Event(x0, &state);
-
+  // event detection
+  event = new Event(x0, &state); // refer to Event.cpp
 }
 
 double Dynamics::f1(double xin){return (xin*sr); }
