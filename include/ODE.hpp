@@ -1,15 +1,19 @@
 #ifndef _ODE_
 #define _ODE_
+
 #include<iostream>
 #include<fstream>
 #include<cstdlib>
 #include<stdio.h>
 #include<math.h>
+
 #include"Dynamics.hpp"
 #include"Event.hpp"
 
 #define ZERO 1e-10
 #define EEPS 1e-8
+
+#define DIM_MAX 30
 
 class ODE
 {

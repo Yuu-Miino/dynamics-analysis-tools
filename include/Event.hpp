@@ -4,6 +4,8 @@
 #include<iostream>
 #include<cstdlib>
 
+#define EFNUM_MAX 10
+
 class Event{
 public:
   unsigned int EFNUM;
@@ -13,7 +15,7 @@ public:
   int EiDIR;
   int rev;
   
-  Event(double* x0, int* state);
+  Event(double* x0, int* mode);
   ~Event(){
     delete EDIR;
     delete Eflag;
@@ -21,8 +23,8 @@ public:
   
   void eventFunc(double* out, double* xin, double tin);
   void deventFuncdt(double* out, double* xin, double tin, double* dx);
-  int switchState();
-  int initState(double* xin);
+  int switchMode();
+  int initMode(double* xin);
   void reverseEvent();
 };
 

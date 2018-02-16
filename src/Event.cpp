@@ -1,8 +1,8 @@
 #include"Event.hpp"
 
-Event::Event(double* x0, int* state){
+Event::Event(double* x0, int* mode){
 
-  *state = initState(x0);
+  *mode = initMode(x0);
   EFNUM = 2;
   EDIR  = new int[EFNUM];
   Eflag = new int[EFNUM];
@@ -22,7 +22,7 @@ void Event::deventFuncdt(double* out, double* xin, double tin, double* dx){
   out[1] = dx[0];
 }
 
-int Event::switchState(){
+int Event::switchMode(){
   if(EiNUM == 0){
     return (rev==1?2:1);
   }else if(EiNUM == 1){
@@ -33,7 +33,7 @@ int Event::switchState(){
   }
 }
 
-int Event::initState(double* xin){
+int Event::initMode(double* xin){
   if(xin[0] > 1e-9) return 1;
   return 2;
 }

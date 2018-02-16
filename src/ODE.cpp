@@ -1,12 +1,7 @@
 #include "ODE.hpp"
 
 void ODE::stepRK(){
-  double *k0, *k1, *k2, *k3, *tmp;
-  k0 = new double[dyna->DIM]();
-  k1 = new double[dyna->DIM]();
-  k2 = new double[dyna->DIM]();
-  k3 = new double[dyna->DIM]();
-  tmp = new double[dyna->DIM]();
+  double k0[DIM_MAX], k1[DIM_MAX], k2[DIM_MAX], k3[DIM_MAX], tmp[DIM_MAX];
   
   //exe K0
   for( unsigned int i=0; i<dyna->DIM; i++){
@@ -37,18 +32,12 @@ void ODE::stepRK(){
     dyna->x[i] += (h/6.0)*(k0[i] + 2.0*k1[i] + 2.0*k2[i] + k3[i]);
   }
   *(dyna->t) += h;
-  delete k0;
-  delete k1;
-  delete k2;
-  delete k3;
-  delete tmp;
 }
 
 void ODE::stepODE(int printFlag)
 {
-  double* xold; double told;
+  double xold[DIM_MAX]; double told;
   unsigned int FINISH = 0;
-  xold = new double[dyna->DIM];
 
   while(!FINISH){
     for(unsigned int i = 0; i < dyna->DIM; i++){xold[i]=dyna->x[i];}
@@ -63,23 +52,17 @@ void ODE::stepODE(int printFlag)
       h = initStep;
     }
     if(printFlag){
-      printf("%+.8lf ", dyna->tfinal + *(dyna->t));
+      printf("%+.12lf ", dyna->tfinal + *(dyna->t));
       for(unsigned int i = 0; i < dyna->DIM; i++)
-	printf("%+.8lf ",dyna->x[i]);
+	printf("%+.12lf ",dyna->x[i]);
       printf("\n");
     }
   }
-  delete xold;
 }
 
 int ODEwithEvent::stepODEwithEvent(int printFlag)
 {
-  double *tmp0, *tmp1, *dx, *df, *xold, told;
-  tmp0 = new double[dyna->event->EFNUM];
-  tmp1 = new double[dyna->event->EFNUM];
-  dx = new double[dyna->DIM];
-  df = new double[dyna->DIM];
-  xold = new double[dyna->DIM];
+  double tmp0[EFNUM_MAX], tmp1[EFNUM_MAX], dx[DIM_MAX], df[DIM_MAX], xold[DIM_MAX], told;
   int index, tmp_dir, grazeFlag = 0, newtonFlag = 1;
   int FINISH = 0, ret = 0, eventFIN = 0;
 
@@ -89,10 +72,10 @@ int ODEwithEvent::stepODEwithEvent(int printFlag)
 
   // if print the orbit in stdout
   if(printFlag){
-    printf("%+.8lf ", dyna->tfinal + *(dyna->t));
+    printf("%+.12lf ", dyna->tfinal + *(dyna->t));
     for(unsigned int i = 0; i < dyna->DIM_state; i++)
-      printf("%+.8lf ",dyna->x[i]);
-    printf("\n");
+      printf("%+.12lf ",dyna->x[i]);
+    printf("%d \n",dyna->mode);
   }
 
   // main loop
@@ -124,8 +107,6 @@ int ODEwithEvent::stepODEwithEvent(int printFlag)
       
       // set the rest time as the step value 
       h = dyna->tend - told;
-      //fprintf(stderr,"[%lf - %lf] = %lf(%d)| \n",
-      //      dyna->tend,told,h,crossFlag);
 
       stepRK();     // take a step of RK method
 
@@ -208,19 +189,13 @@ int ODEwithEvent::stepODEwithEvent(int printFlag)
     }
     
     if(printFlag && newtonFlag){
-      printf("%+.8lf ", dyna->tfinal+*(dyna->t));
+      printf("%+.12lf ", dyna->tfinal+*(dyna->t));
       for(unsigned int i = 0; i < dyna->DIM_state; i++)
-	printf("%+.8lf ",dyna->x[i]);
-      printf("\n");
+	printf("%+.12lf ",dyna->x[i]);
+      printf("%d \n",dyna->mode);
     }
   }// for "while(!FINISH)"
   
-  delete tmp0;
-  delete tmp1;
-  delete dx;
-  delete df;
-  delete xold;
-
   return ret;
 }
 

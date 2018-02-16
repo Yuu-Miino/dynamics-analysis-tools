@@ -11,6 +11,7 @@ using namespace std;
 
 class Dynamics{
 private:
+  // Name of instance
   std::string name;
 public:
   int DIM_state;
@@ -20,8 +21,7 @@ public:
 
   // Parameter set
   double k, b, b0, sl, sr;
-  double fx1, fx2;
-  int state;
+  int mode;
 
   // Event
   Event *event;

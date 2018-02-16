@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 
+// Initialize
 Dynamics::Dynamics(string namein, char* in){
   name = namein;    // Name of instance
   ifstream ifs(in); // Name of input file
@@ -30,15 +31,16 @@ Dynamics::Dynamics(string namein, char* in){
   tfinal = tstart; // Temporary time to store the total time
 
   // event detection
-  event = new Event(x0, &state); // refer to Event.cpp
+  event = new Event(x0, &mode); // refer to Event.cpp
 }
 
+// Dynamical system description
 double Dynamics::f1(double xin){return (xin*sr); }
 double Dynamics::f2(double xin){return (xin/sl); }
 
 void Dynamics::func(double* out, double* in, double tin){
   double fx=0, cost = cos(tin);
-  switch(state){
+  switch(mode){
   case 1:
     fx = f1(in[0]);
     break;
@@ -48,6 +50,9 @@ void Dynamics::func(double* out, double* in, double tin){
   default:
     break;
   }
+
+  // out = dx/dt
+  // in  = x
   out[0] = in[1];
   out[1] = -k*in[1]- fx + b*cost +b0;
 }
@@ -59,12 +64,12 @@ void Dynamics::freshX0(){
 }
 
 void Dynamics::printProfile(int retFlag){
-  fprintf(stderr,"%10s: %d-dim: [%+.5lf:%+.5lf] [x0, y0] = [%+.5lf %+.5lf], [k b0 b sl sr] = [%+.5lf %+.5lf %+.5lf %+.5lf %+.5lf] ",
+  fprintf(stderr,"%5s: %d-dim: [%+.3lf:%+.3lf] [x0, y0] = [%+.5lf %+.5lf], [k b0 b sl sr] = [%+.5lf %+.5lf %+.5lf %+.5lf %+.5lf] ",
 	  name.c_str(),DIM,tstart,tend,x0[0],x0[1],k,b0,b,sl,sr);
   if(retFlag == 1) fprintf(stderr,"\n");
 }
 void Dynamics::printStd(const char* in){
-  char name[20] = "dout.dat";
+  char name[20] = "out.pt";
   if(in != NULL){
     strcpy(name,in);
   }
