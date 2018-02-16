@@ -16,7 +16,7 @@ For the detection of the event, we have implemented Newton's method and the bina
 # How to use
 
 1. Prepare an input file
-   - including parameters and initial conditions
+   - including parameters and initial conditions, e.g., `01.pt`
 2. Run `pp (counts of maps) (input file name)`
-   - then you get the data of the solution orbit in `stdout` and also get *pp.poin* which include the Poincar\'e map of the orbit
+   - then you get the data of the solution orbit in `stdout` and also get `pp.poin` which include the Poincare map of the orbit
 
