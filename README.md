@@ -20,5 +20,5 @@ and [the bisection method](https://en.wikipedia.org/wiki/Bisection_method).
    - including parameters and initial conditions, e.g., `01.pt`
 2. Run `pp (counts of maps) (input file name)`
    - then you get the data of the solution orbit in `stdout` and 
-     also get `pp.poin` which include the Poincare map of the orbit
+     also get `pp.poin` which include [the Poincare map](https://en.wikipedia.org/wiki/Poincar%C3%A9_map) of the orbit
 
