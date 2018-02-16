@@ -9,9 +9,9 @@ For the detection of the event, we have implemented Newton's method and the bina
 # How to build
 
 1. Download all files
-2. Move to the **root** directory of source files
+2. Move to the root directory of source files
 3. Run `make pp`
-   - then you get pp program in **bin** directory
+   - then you get pp program in `bin` directory
 
 # How to use
 
