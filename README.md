@@ -18,5 +18,5 @@ For the detection of the event, we have implemented Newton's method and the bina
 1. Prepare an input file
    - including parameters and initial conditions
 2. Run `pp *period* *inputfile*`
-   - then you get *pp.orbit* and *pp.poin*
+   - then you get the data of the solution orbit in `stdout` and also get *pp.poin* which include the Poincar\'e map of the orbit
 
