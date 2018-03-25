@@ -1,59 +1,78 @@
-#include"Dynamics.hpp"
-#include"ODE.hpp"
-#include<fstream>
+#include "HybridSystem.hpp"
+#include "tools.hpp"
+
+#include <stdio.h>
+#include <unistd.h>
+
+#define STATE_DIM 2
+#define PARA_DIM  4
 
 using namespace std;
 
 int main(int argc, char **argv){
-  if(argc < 3 || !strcmp("--help",argv[1])){
-    fprintf(stderr,"usage: ./pp (counts of maps) (input file name)");
-    return -1;
-  }  
-  FILE *fppoin;
-  int mapCount, mapMax, ret;
-  Dynamics* dyna;
-  ODEwithEvent* ode;
-
-  mapMax = atoi(&argv[1][0]);
-  dyna = new Dynamics("pp",argv[2]);
-  ode  = new ODEwithEvent(dyna,1e-2);
-  fppoin = fopen("pp.poin","w");
-
-  dyna->printProfile(1);
-
-  if(mapMax < 0){
-    dyna->tend *= -1;
-    dyna->event->reverseEvent();
-    ode->reverseStep();
-    mapMax *= -1;
+  // Help message
+  if(argc < 2 || !strcmp("--help",argv[1])){
+    fprintf(stderr,"usage:\t./pp [-m <counts_of_maps>] filename\n");
+    return 0;
   }
 
-  fprintf(stderr,"mapMax = %d\n",mapMax);
-  for(mapCount = 0; mapCount <= mapMax; mapCount++){
-    fprintf(stderr,"%07.3lf %% (mapCount: %07d )",(double)mapCount*100/(double)mapMax,mapCount);
-    dyna->printProfile(0);    
-    fprintf(stderr,"\r");
-    while(1){
-      ret = ode->stepODEwithEvent(1);
-      dyna->freshX0();
-      
-      if(ret){
-	dyna->tstart = *(dyna->t);
-	dyna->mode = dyna->event->switchMode();
-      }else{
-	dyna->tstart = 0;
-	dyna->tfinal += dyna->tend;
-	break;
-      }
+  // Variables definition
+  FILE *fpPoin, *fpOrbit;
+  int countOfMaps = 10;
+  State init(STATE_DIM), dst(STATE_DIM);
+  Parameter para(PARA_DIM);
+  int mode;
+
+  // Options
+  int opt; opterr = 0;
+  while ((opt = getopt(argc, argv, "m:")) != -1) {
+    switch(opt){
+    case 'm':
+      countOfMaps = atoi(optarg);
+      break;
+    default:
+      printf("warning: undefined option is selected. %d\n",opt);
+      break;
     }
-    
-    fprintf(fppoin,"%+015.9lf ",dyna->tfinal+dyna->tend);
-    for(int i = 0; i < dyna->DIM; i++) fprintf(fppoin,"%+.10lf ",dyna->x0[i]);
-    fprintf(fppoin,"%d \n",dyna->mode);
   }
-  fprintf(stderr,"\n");
-  
-  delete dyna;
-  delete ode;
+
+  // Initializations
+  string infile = argv[optind];
+  getFromFile(init,para,mode,infile);
+  HybridSystem hs(mode);
+
+  fpPoin  = fopen((infile+".pp.poin").c_str(),"w");
+  fpOrbit = fopen((infile+".pp.orbit").c_str(),"w");
+
+  // Display informations
+  fprintf(stderr,"=============== PP program ===============\n");
+  fprintf(stderr,"filename\t: %s\n",argv[optind]);
+  fprintf(stderr,"counts of maps\t: %d\n",countOfMaps);
+  fprintf(stderr,"initial values\t: ");  init.printX(stderr,2); fprintf(stderr,"\n");
+  fprintf(stderr,"initial mode \t: %d\n",hs.getMode());
+  fprintf(stderr,"parameters\t: ");  para.printValue(stderr);  fprintf(stderr,"\n\n");
+
+  // Print arguments
+  printArg(fpOrbit,argc,argv);
+  printArg(fpPoin,argc,argv);
+
+  // Main loop
+  for(int mapCount = 0; mapCount <= abs(countOfMaps); mapCount++){
+    fprintf(stderr,"%07.3lf %% (mapCount: %03d) ",
+	    (double)mapCount*100/(double)countOfMaps,mapCount);
+    fprintf(stderr,"mode: %d | ",hs.getMode()); 
+    init.printT(stderr); init.printX(stderr,STATE_DIM); fprintf(stderr,"\r");
+
+    hs.map(init,para,2.0*M_PI,dst,fpOrbit);
+
+    init = dst;
+    init.printT(fpPoin);
+    init.printX(fpPoin,STATE_DIM);
+    fprintf(fpPoin,"%d \n",mode);
+  }// End of main loop
+
+  fclose(fpOrbit);
+  fclose(fpPoin);
+  fprintf(stderr,"\n=============== PP program ===============\n");
   return 0;
 }
