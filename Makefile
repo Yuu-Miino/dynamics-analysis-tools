@@ -9,5 +9,5 @@ pp:
 	make -C $(SRC) $@
 
 clean:
-	rm -f *~
+	rm -f ./*~
 	make -C $(SRC) $@
