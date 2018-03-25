@@ -10,9 +10,9 @@ and [the bisection method](https://en.wikipedia.org/wiki/Bisection_method).
 # How to build
 
 1. Download all files
-2. Move to the root directory
+2. Move to the root directory where you locate the dowloaded files
 3. Run `make pp`
-   - then you get pp program in `bin` directory
+   - then you get the pp program in `bin` directory
 
 # How to use
 
