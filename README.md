@@ -18,7 +18,6 @@ and [the bisection method](https://en.wikipedia.org/wiki/Bisection_method).
 
 1. Prepare an input file
    - including parameters and initial conditions, e.g., `01.pt`
-2. Run `pp [-m counts_of_maps] filename`
-   - then you get the data of the solution orbit in `stdout` and 
-     also get `pp.poin` which gives [the Poincare map](https://en.wikipedia.org/wiki/Poincar%C3%A9_map) of the orbit
-
+2. Run `pp [-m <counts_of_maps>] filename`
+   - then you get the data of the solution orbit in a file `FILENAME.pp.orbit` and 
+     also get another file `FILENAME.pp.poin` which gives [the Poincare map](https://en.wikipedia.org/wiki/Poincar%C3%A9_map) of the orbit
