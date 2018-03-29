@@ -7,6 +7,8 @@ all:
 
 pp:
 	make -C $(SRC) $@
+bf1:
+	make -C $(SRC) $@
 
 clean:
 	rm -f ./*~

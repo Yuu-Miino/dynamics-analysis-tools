@@ -35,19 +35,20 @@ pwlDuffingMode::~pwlDuffingMode(){
 bool pwlDuffingMode::inDomain(const State& state, const Parameter& para){
   double x = state.getX(0);
   double theta = para.getValue(3);
+  double th1 = -1.5, th2 = theta, th3 = -2, th4 = 0.05;
 
   switch(modeID){
   case 0: 
-    if(x - (theta-2.0)*3.0/8.0 > ZERO) return false; 
+    if(x - (th2-th1)*3.0/8.0 > ZERO) return false;
     break;
   case 1: 
-    if(x - (theta-2.0)*3.0/8.0 < ZERO || x - (theta+2.0)*3.0/8.0 > ZERO) return false; 
+    if(x - (th2-th1)*3.0/8.0 < ZERO || x - (th2-th3)*3.0/8.0 > ZERO) return false; 
     break;
   case 2:
-    if(x - (-theta+2.0)*3.0/8.0 < ZERO) return false;
+    if(x - (th4-th3)*3.0/8.0 < ZERO) return false;
     break;
   case 3:
-    if(x - (-theta+2.0)*3.0/8.0 > ZERO || x - (-theta-2.0)*3.0/8.0 < ZERO) return false;
+    if(x - (th4-th3)*3.0/8.0 > ZERO || x - (th4-th1)*3.0/8.0 < ZERO) return false;
     break;
   default: 
     fprintf(stderr,"Error: undefined modeID = %d in pwlDuffingEvent::inDomain\n",modeID);
@@ -59,21 +60,22 @@ bool pwlDuffingMode::inDomain(const State& state, const Parameter& para){
 void pwlDuffingMode::eventFunction(double* EF, const State& state, const Parameter& para){
   double x = state.getX(0);
   double theta = para.getValue(3);
-  
+  double th1 = -1.5, th2 = theta, th3 = -2, th4 = 0.05;
+
   switch(modeID){
   case 0: 
-    EF[0] = x - (theta-2.0)*3.0/8.0;
+    EF[0] = x - (th2-th1)*3.0/8.0;
     break;
   case 1: 
-    EF[0] = x - (theta-2.0)*3.0/8.0;
-    EF[1] = x - (theta+2.0)*3.0/8.0;
+    EF[0] = x - (th2-th1)*3.0/8.0;
+    EF[1] = x - (th2-th3)*3.0/8.0;
     break;
   case 2: 
-    EF[0] = x - (-theta+2.0)*3.0/8.0;
+    EF[0] = x - (th4-th3)*3.0/8.0;
     break;
   case 3: 
-    EF[0] = x - (-theta-2.0)*3.0/8.0;
-    EF[1] = x - (-theta+2.0)*3.0/8.0;
+    EF[0] = x - (th4-th1)*3.0/8.0;
+    EF[1] = x - (th4-th3)*3.0/8.0;
     break;
   default: 
     fprintf(stderr,"Error: undefined modeID = %d in pwlDuffingEvent::eventFunction\n",modeID);

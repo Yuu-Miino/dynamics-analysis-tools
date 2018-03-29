@@ -26,7 +26,7 @@ set xr [-2:2]
 set yr [-2:2]
 
 PERIOD = 2*pi
-mapFrom  = 0
+mapFrom  = 20
 mapTo    = 100
 timeFrom = mapFrom * PERIOD
 timeTo   = mapTo * PERIOD

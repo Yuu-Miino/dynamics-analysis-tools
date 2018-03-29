@@ -13,6 +13,8 @@ all:
 
 pp: pp.o HSODEsolver.o ODEsolver.o pwlDuffing.o pwlDuffingMode.o
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
+bf1: bf1.o HSODEsolver.o ODEsolver.o pwlDuffing.o pwlDuffingMode.o
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 
 .cpp.o:
 	$(CC) $(INCLUDE) -c $<
