@@ -7,17 +7,40 @@ The implemented method for numerical integration is [RK4](https://en.wikipedia.o
 For the detection of the event, we have implemented [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method)
 and [the bisection method](https://en.wikipedia.org/wiki/Bisection_method).
 
-# How to build
+## How to build
 
 1. Download all files
-2. Move to the root directory where you locate the dowloaded files
-3. Run `make pp`
-   - then you get the pp program in `bin` directory
+2. Move to the root directory where this file exists
+3. Run `make pp` and get the pp program in `bin` directory
 
-# How to use
+## How to use
 
-1. Prepare an input file
-   - including parameters and initial conditions, e.g., `01.pt`
-2. Run `pp [-m <counts_of_maps>] filename`
-   - then you get the data of the solution orbit in a file `FILENAME.pp.orbit` and 
-     also get another file `FILENAME.pp.poin` which gives [the Poincare map](https://en.wikipedia.org/wiki/Poincar%C3%A9_map) of the orbit
+1. Prepare an input file, e.g., `01.pt`, including follows:
+   1. Parameters
+   2. Initial conditions 
+   3. Initial mode
+   4. Additional informations you need
+2. Run `pp [-m <counts_of_maps>] filename` and get the following files:
+   1. `FILENAME.pp.orbit` which has the data of the solution orbit
+   2. `FILENAME.pp.poin` which has the data of [the Poincare map](https://en.wikipedia.org/wiki/Poincar%C3%A9_map) of the orbit
+
+# fix = FIXed point
+
+This program computes the fixed point of a map.
+
+## How to build
+
+1. Download all files
+2. Move to the root directory where this file exists
+3. Run `make fix` and get the pp program in `bin` directory
+
+## How to use
+
+1. Prepare an input file, e.g., `01.pt`, including follows:
+   1. Parameters 
+   2. Initial conditions 
+   3. 
+2. Run `fix [-p <period>] filename` and get the following files:
+   1. `FILENAME.fix.pt` which has the data of the fixed point
+   2. `FILENAME.fix.jac` which has the data of the Jacobian matrix with respect to the fixed point
+
