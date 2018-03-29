@@ -39,7 +39,7 @@ This program computes the fixed point of a map.
 1. Prepare an input file, e.g., `01.pt`, including follows:
    1. Parameters 
    2. Initial conditions 
-   3. 
+   3. Additional infomation you need
 2. Run `fix [-p <period>] filename` and get the following files:
    1. `FILENAME.fix.pt` which has the data of the fixed point
    2. `FILENAME.fix.jac` which has the data of the Jacobian matrix with respect to the fixed point
