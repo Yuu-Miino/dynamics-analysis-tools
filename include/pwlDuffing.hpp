@@ -4,6 +4,18 @@
 #include "Dynamics.hpp"
 #include "HSODEsolver.hpp"
 
+#define MODE_NUM  4
+
+#define STATE_DIM  21
+#define PARA_DIM   4
+#define JAC_MAT_DIM 3
+#define JAC_PARA_DIM 3
+
+#define EVENT_STATE_INDEX 0 // x
+#define TIME_STATE_INDEX  2 // t
+
+#define PRINT_DIM     2
+
 // Dynamical system
 class pwlDuffing: public Dynamics{
 private:

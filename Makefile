@@ -9,6 +9,8 @@ pp:
 	make -C $(SRC) $@
 bf1:
 	make -C $(SRC) $@
+fix:
+	make -C $(SRC) $@
 
 clean:
 	rm -f ./*~

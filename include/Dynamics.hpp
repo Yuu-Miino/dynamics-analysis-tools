@@ -58,6 +58,7 @@ public:
   }
   int getDIM() const{return DIM;}
 
+  void addX(int index, double val){x[index] += val;}
   void addPhaseDiff(double val){ phaseDiff+= val;}
 
   // Printer
@@ -117,9 +118,6 @@ public:
 };
 
 class Dynamics{
-protected:
-  int DIM_state;
-  int DIM;
 public:
   Dynamics(){}
   virtual ~Dynamics(){}   

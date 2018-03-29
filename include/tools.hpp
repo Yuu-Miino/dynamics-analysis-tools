@@ -29,7 +29,7 @@ void printArg(FILE *fp, int argc, char** argv){
  * @param int      |mode   Current mode of the hybrid system.
  * @param string   |infile The name of data file.
 */
-void getFromFile(State& init, Parameter& para, int& mode, std::string infile){
+void getFromFile(State& init, int dim, Parameter& para, int& mode, std::string infile){
   std::ifstream ifs;
   ifs.open(infile);
   if(!ifs.is_open()){
@@ -39,7 +39,7 @@ void getFromFile(State& init, Parameter& para, int& mode, std::string infile){
 
   init.setT(0);
   para.setValueFromFile(ifs);
-  init.setXfromFile(ifs,init.getDIM());
+  init.setXfromFile(ifs,dim);
   ifs>>mode;
 }
 

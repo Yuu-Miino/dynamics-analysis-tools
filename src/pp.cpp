@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define STATE_DIM 2
-#define PARA_DIM  4
-
 using namespace std;
 
 int main(int argc, char **argv){
@@ -61,14 +58,14 @@ int main(int argc, char **argv){
     fprintf(stderr,"%07.3lf %% (mapCount: %03d) ",
 	    (double)mapCount*100/(double)countOfMaps,mapCount);
     fprintf(stderr,"mode: %d | ",hs.getMode()); 
-    init.printT(stderr); init.printX(stderr,STATE_DIM); fprintf(stderr,"\r");
+    init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
     hs.map(init,para,2.0*M_PI,dst,fpOrbit);
 
     init = dst;
     init.printT(fpPoin);
-    init.printX(fpPoin,STATE_DIM);
-    fprintf(fpPoin,"%d \n",mode);
+    init.printX(fpPoin,PRINT_DIM);
+    fprintf(fpPoin,"%d \n",hs.getMode());
   }// End of main loop
 
   fclose(fpOrbit);
