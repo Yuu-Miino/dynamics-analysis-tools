@@ -36,7 +36,7 @@ public:
 
     // Main loop
     while(1){
-      odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe, printDist);
+      odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe, printDist, PRINT_DIM);
       init = *swe.state;
       if(swe.eventFlag){
 	mode = mp[mode]->modeDist(swe.eventIndex);
@@ -79,7 +79,7 @@ public:
 	  if(i == JAC_MAT_DIM || i == JAC_MAT_DIM + 4 || i == JAC_MAT_DIM + 8)
 	    init.setX(i,1);
 	}
-	odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe, NULL);
+	odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe);
 	init = *swe.state;
 
 	mp[mode]->dyna->ode(dxdt, init, inPara);

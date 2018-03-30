@@ -73,7 +73,7 @@ public:
 
   void runHSODEsolver(ModeProperty& mode, 
 		      const State& init, const Parameter& para, double tfinal,
-		      StateWithEvent& out, FILE* printDist=NULL);
+		      StateWithEvent& out, FILE* printDist=NULL, int printDim=-1);
   void eventDetect(ModeProperty& mode, 
 		   const State& current, double *ef0, 
 		   const State& next,    double *ef1, const Parameter& para,
