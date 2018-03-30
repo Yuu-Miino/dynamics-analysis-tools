@@ -11,6 +11,8 @@ bf1:
 	make -C $(SRC) $@
 fix:
 	make -C $(SRC) $@
+bf2:
+	make -C $(SRC) $@
 
 clean:
 	rm -f ./*~

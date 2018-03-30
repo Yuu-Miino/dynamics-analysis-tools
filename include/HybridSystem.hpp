@@ -4,6 +4,9 @@
 #include "pwlDuffing.hpp"
 #include <Eigen/Dense>
 
+#include <iostream>
+
+using namespace std;
 using namespace Eigen;
 
 class HybridSystem{
@@ -98,7 +101,6 @@ public:
 		init.getX(JAC_MAT_DIM*(col + JAC_MAT_DIM + 1) + EVENT_STATE_INDEX) * dxdt[row]/dxdt[EVENT_STATE_INDEX];
 	  if(jacPflag){ jacP = tmpJacP; jacPflag = false;}
 	  else{ jacP = tmpJac*jacP + tmpJacP;}
-
 	  jac = tmpJac * jac;
 	  
 	  // Mode transition
@@ -118,7 +120,6 @@ public:
 		init.getX(JAC_MAT_DIM*(col + JAC_MAT_DIM + 1) + TIME_STATE_INDEX) * dxdt[row]/dxdt[TIME_STATE_INDEX];
 	  if(jacPflag){ jacP = tmpJacP; jacPflag = false;}
 	  else{ jacP = tmpJac*jacP + tmpJacP;}
-
 	  jac = tmpJac * jac;
 	  
 	  // Reset

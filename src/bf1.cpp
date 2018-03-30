@@ -5,9 +5,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define STATE_DIM 2
-#define PARA_DIM  4
-
 using namespace std;
 
 int main(int argc, char **argv){
@@ -72,10 +69,10 @@ int main(int argc, char **argv){
   fprintf(stderr,"\n");
 
   if(endValFlag){
-    fprintf(stderr,"Set the end value of parameter iteration: "); std::cin>>endVal;
+    fprintf(stderr,"Set the end value of parameter continuation: "); std::cin>>endVal;
     fprintf(stderr,"\n");
   }
-  fprintf(stderr,"end value of iteration\t: %lf\n",endVal);
+  fprintf(stderr,"end value of parameter continuation\t: %lf\n",endVal);
   fprintf(stderr,"\n");
 
   // Print arguments

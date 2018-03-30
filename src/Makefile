@@ -18,6 +18,8 @@ bf1: bf1.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 fix: fix.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
+bf2: bf2.o $(BASE_O)
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 
 .cpp.o:
 	$(CC) $(INCLUDE) -c $<
