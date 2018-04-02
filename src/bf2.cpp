@@ -19,12 +19,15 @@ using namespace Eigen;
 int main(int argc, char **argv){
   // Help message
   if(argc < 2 || !strcmp("--help",argv[1])){
-    fprintf(stderr,"usage:\t./bf [-p <period>] filename\n");
+    fprintf(stderr,"usage:\t./bf \
+                    [-p <period>] [-i <paramter_index>] [-G | -I] \
+                    [-C <parameter_index> [-s <parameter_step>]] \
+                    filename\n");
     return 0;
   }
 
   // Variables definition
-  FILE *fpJac, *fpPt;
+  FILE *fpJac, *fpPt, *fpCont;
   ofstream ofsLog;
   int period = 1;
   State init[3]= {STATE_DIM,STATE_DIM,STATE_DIM};
@@ -41,12 +44,12 @@ int main(int argc, char **argv){
   double inputMU = -1;
 
   bool contFlag = false, finFlag = false, stopFlag = false;
-  double paraStep   = 0;
+  double paraStep   = 1e-3;
   int contParaIndex= 0;
 
   // Options
   int opt; opterr = 0;
-  while ((opt = getopt(argc, argv, "p:i:GIC:")) != -1) {
+  while ((opt = getopt(argc, argv, "p:i:GIC:s:")) != -1) {
     switch(opt){
     case 'p':
       period = atoi(optarg);
@@ -55,6 +58,7 @@ int main(int argc, char **argv){
       paraIndex = atoi(optarg);
       break;
     case 'C': contParaIndex = atoi(optarg); contFlag = true;  break;
+    case 's': if(contFlag) paraStep = atof(optarg); break;      
     case 'G': inputMU = 1.0; break;
     case 'I': inputMU = -1.0; break;
     default:
@@ -76,9 +80,14 @@ int main(int argc, char **argv){
   init[0].setX(JAC_MAT_DIM+4,1);
   init[0].setX(JAC_MAT_DIM+8,1);
 
-  fpJac = fopen((infile+".bf.jac").c_str(),"w");
-  fpPt  = fopen((infile+".bf.pt").c_str(),"w");
-  ofsLog.open(infile+".bf.log");
+  fpJac  = fopen((infile+".bf2.jac").c_str(),"w");
+  fpPt   = fopen((infile+".bf2.pt").c_str(),"w");
+  if(contFlag){
+    char str[20];
+    sprintf(str,".%d-%d(%+1.1e)",paraIndex,contParaIndex,paraStep);
+    fpCont = fopen((infile+str+".bf2.cont").c_str(),"w");
+  }
+  ofsLog.open(infile+".bf2.log");
 
   // Display informations
   fprintf(stderr,"=============== BF program ===============\n");
@@ -92,14 +101,15 @@ int main(int argc, char **argv){
   fprintf(stderr,"inputMU \t: %lf\n",inputMU);
   fprintf(stderr,"\n");
 
-  if(contFlag){
-    fprintf(stderr,"Set the step size of parameter continuation: "); std::cin>>paraStep;
-    fprintf(stderr,"\n");
-  }
-
   // Print arguments
   printArg(fpJac,argc,argv);
   printArg(fpPt,argc,argv);
+  if(contFlag){
+    printArg(fpCont,argc,argv);
+    fprintf(fpCont,"# k b0 b x0 y0 mode norm(mu1) norm(mu2) arg(mu1) arg(mu2)\n");
+  }
+  long int posJac = ftell(fpJac);
+  long int posPt  = ftell(fpPt);
 
   // Main loop
   while(!stopFlag){
@@ -108,11 +118,6 @@ int main(int argc, char **argv){
       init[1] = init[2] = init[0];
       init[1].addX(0,DIFF_EPS);
       init[2].addX(1,DIFF_EPS);
-
-      // Print info
-      fprintf(stderr,"bfIter: %03d | ",bfIter);
-      fprintf(stderr,"mode: %d | ",hs.getMode()); 
-      init[0].printT(stderr); init[0].printX(stderr,PRINT_DIM);
 
       // Get Jacobian matrix
       for(int i = 0; i < 3; i++) hs.jacobian(jac[i],jacP[i],period,init[i],para,2.0*M_PI,dst[i]);
@@ -141,8 +146,6 @@ int main(int argc, char **argv){
 
       f << dst[0].getX(0) - init[0].getX(0), dst[0].getX(1) - init[0].getX(1), detJac;
       h = df.colPivHouseholderQr().solve(f);
-      fprintf(stderr," | %e",f.norm());
-      fprintf(stderr,"\r");
 
       // Log
       ofsLog<<"bfIter: "<<bfIter<<"**************************"<<endl;
@@ -157,17 +160,36 @@ int main(int argc, char **argv){
 
       // If finished
       if(f.norm() < 1e-6 && bfIter > 1){
+	finFlag = true;
 	if(!contFlag) cerr<<"\n\n";
 	fprintf(stderr,"Finished in %2d loops (error: %e) | ",bfIter,f.norm());
-	fprintf(stderr,"mode: %d | ",hs.getMode()); 
-	init[0].printT(stderr); init[0].printX(stderr,PRINT_DIM); cerr<<" | ";
+	para.printValue(stderr); cerr<<" | ";
+	//fprintf(stderr,"mode: %d | ",hs.getMode()); 
+	//init[0].printT(stderr); init[0].printX(stderr,PRINT_DIM); cerr<<" | ";
       
 	ComplexEigenSolver<MatrixXd> eig(jac[0].block<2,2>(0,0));
 	IOFormat oneline(12,DontAlignCols,  "", " , ",  "", "",   "", "");
 	cerr<<"MU: "<<eig.eigenvalues().format(oneline);
 	
-	if(contFlag) fprintf(stderr,"\e[m\n");
-	finFlag = true;
+	// Print results
+	fseek(fpJac,posJac,SEEK_SET);
+	fseek(fpPt,posPt,SEEK_SET);
+	fprintf(fpJac,"%+.12lf %+.12lf\n%+.12lf %+.12lf",
+		jac[0](0,0),jac[0](0,1),jac[0](1,0),jac[0](1,1));
+	para.printValue(fpPt);
+	init[0].printX(fpPt,PRINT_DIM);
+	fprintf(fpPt,"%d",hs.getMode());
+	
+	if(contFlag){
+	  fprintf(stderr,"\r");
+	  
+	  para.printValue(fpCont);
+	  init[0].printX(fpCont,PRINT_DIM);
+	  fprintf(fpCont,"%d ",hs.getMode());
+	  fprintf(fpCont,"%+.12lf %+.12lf %+.12lf %+.12lf",
+		  norm(eig.eigenvalues()(0)),norm(eig.eigenvalues()(1)),arg(eig.eigenvalues()(0)),arg(eig.eigenvalues()(1)));
+	  fprintf(fpCont,"\n");
+	}
 	break;
       }
     
@@ -180,17 +202,13 @@ int main(int argc, char **argv){
     }else{
       finFlag = false;
     }
+    
     para.addValue(contParaIndex,paraStep);
   }// End of continuation loop
 
-  fprintf(fpJac,"%+.12lf %+.12lf\n%+.12lf %+.12lf",
-	  jac[0](0,0),jac[0](0,1),jac[0](1,0),jac[0](1,1));
-  para.printValue(fpPt);
-  init[0].printX(fpPt,PRINT_DIM);
-  fprintf(fpPt,"%d",hs.getMode());
-  
   fclose(fpJac);
   fclose(fpPt);
+  if(contFlag) fclose(fpCont);
   fprintf(stderr,"\n=============== BF program ===============\n");
   return 0;
 }

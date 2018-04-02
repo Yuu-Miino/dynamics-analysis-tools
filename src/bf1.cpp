@@ -50,11 +50,11 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
-  getFromFile(init,para,mode,infile);
+  getFromFile(init,2,para,mode,infile);
   HybridSystem hs(mode);
   startVal = para.getValue(paraIndex);
 
-  fpOut  = fopen((infile+".bf1.out").c_str(),"w");
+  fpOut  = fopen((infile+".bf1").c_str(),"w");
 
   // Display informations
   fprintf(stderr,"=============== BF1 program ===============\n");

@@ -16,14 +16,14 @@ if(!exist("width")){width=0.5;}
 }
 
 # Input file
-if(!exist("file")) file="01.pt";
+if(!exist("file")) file="07.pt.bf2.pt";
 
 # Plotting options
 unset key
 set size square
 
-set xr [-2:2]
-set yr [-2:2]
+#set xr [-2:2]
+#set yr [-2:2]
 
 PERIOD = 2*pi
 mapFrom  = 20

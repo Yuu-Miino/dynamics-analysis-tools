@@ -17,12 +17,12 @@ using namespace Eigen;
 int main(int argc, char **argv){
   // Help message
   if(argc < 2 || !strcmp("--help",argv[1])){
-    fprintf(stderr,"usage:\t./fix [-p <period>] filename\n");
+    fprintf(stderr,"usage:\t./fix [-p <period>] [-C <parameter_index>] filename\n");
     return 0;
   }
 
   // Variables definition
-  FILE *fpJac, *fpPt;
+  FILE *fpJac, *fpPt, *fpCont;
   ofstream ofsLog;
   int period = 1;
   State init(STATE_DIM), dst(STATE_DIM);
@@ -58,8 +58,9 @@ int main(int argc, char **argv){
   init.setX(JAC_MAT_DIM+4,1);
   init.setX(JAC_MAT_DIM+8,1);
 
-  fpJac = fopen((infile+".fix.jac").c_str(),"w");
-  fpPt  = fopen((infile+".fix.pt").c_str(),"w");
+  fpJac  = fopen((infile+".fix.jac").c_str(),"w");
+  fpPt   = fopen((infile+".fix.pt").c_str(),"w");
+  fpCont = fopen((infile+".fix.cont").c_str(),"w");
   ofsLog.open(infile+".fix.log");
 
   // Display informations
@@ -81,6 +82,12 @@ int main(int argc, char **argv){
   // Print arguments
   printArg(fpJac,argc,argv);
   printArg(fpPt,argc,argv);
+  if(contFlag){
+    printArg(fpCont,argc,argv);
+    fprintf(fpCont,"# k b0 b x0 y0 mode norm(mu1) norm(mu2) arg(mu1) arg(mu2)\n");
+  }
+  long int posJac = ftell(fpJac);
+  long int posPt  = ftell(fpPt);
 
   // Main loop
   for(int resCount = 0; resCount <= resolution; resCount++){
@@ -119,31 +126,44 @@ int main(int argc, char **argv){
 	if(!contFlag) cerr<<"\n\n";
 	fprintf(stderr,"Finished in %2d loops (error: %e) | ",fixIter,f.norm());
 	para.printValue(stderr); cerr<<" | ";
-	fprintf(stderr,"mode: %d | ",hs.getMode());
-	init.printT(stderr); init.printX(stderr,PRINT_DIM); cerr<<" | ";      
+	//fprintf(stderr,"mode: %d | ",hs.getMode());
+	//init.printT(stderr); init.printX(stderr,PRINT_DIM); cerr<<" | ";      
 
 	IOFormat oneline(12,DontAlignCols,  "", " , ",  "", "",   "", "");
 	cerr<<"MU: "<<eig.eigenvalues().format(oneline);
 	
-	if(contFlag) fprintf(stderr,"\e[m\n");
+	// Print results
+	fseek(fpJac,posJac,SEEK_SET);
+	fseek(fpPt,posPt,SEEK_SET);
+	fprintf(fpJac,"%+.12lf %+.12lf\n%+.12lf %+.12lf",
+		jac(0,0),jac(0,1),jac(1,0),jac(1,1));
+	para.printValue(fpPt);
+	init.printX(fpPt,PRINT_DIM);
+	fprintf(fpPt,"%d",hs.getMode());
+
+	if(contFlag){
+	  fprintf(stderr,"\e[m\n");
+
+	  para.printValue(fpCont);
+	  init.printX(fpCont,PRINT_DIM);
+	  fprintf(fpCont,"%d ",hs.getMode());
+	  fprintf(fpCont,"%+.12lf %+.12lf %+.12lf %+.12lf",
+		  norm(eig.eigenvalues()(0)),norm(eig.eigenvalues()(1)),arg(eig.eigenvalues()(0)),arg(eig.eigenvalues()(1)));
+	  fprintf(fpCont,"\n");
+	}
 	break;
       }
     
       // Renew values 
       for(int i = 0; i < 2; i++) init.addX(i, -h(i));
-
+      
     }// End of main loop
     para.addValue(paraIndex,paraStep);
   }// End of continuation loop
 
-  fprintf(fpJac,"%+.12lf %+.12lf\n%+.12lf %+.12lf",
-	  jac(0,0),jac(0,1),jac(1,0),jac(1,1));
-  para.printValue(fpPt);
-  init.printX(fpPt,PRINT_DIM);
-  fprintf(fpPt,"%d",hs.getMode());
-
   fclose(fpJac);
   fclose(fpPt);
+  fclose(fpCont);
   fprintf(stderr,"\n=============== FIX program ===============\n");
   return 0;
 }

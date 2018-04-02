@@ -1,6 +1,9 @@
 SRC = ./src/
+BIN = ./bin/
+INC = ./include/
 
 .PHONY: all clean
+.IGNORE: clean
 
 all:
 	@echo "No target is set."
@@ -17,3 +20,5 @@ bf2:
 clean:
 	rm -f ./*~
 	make -C $(SRC) $@
+	make -C $(BIN) $@
+	make -C $(INC) $@
