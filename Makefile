@@ -1,7 +1,7 @@
 SRC = ./src/
 BIN = ./bin/
 INC = ./include/
-tes
+
 .PHONY: all clean
 .IGNORE: clean
 
@@ -9,6 +9,8 @@ all:
 	@echo "No target is set."
 
 pp:
+	make -C $(SRC) $@
+ppPendulum:
 	make -C $(SRC) $@
 bf1:
 	make -C $(SRC) $@

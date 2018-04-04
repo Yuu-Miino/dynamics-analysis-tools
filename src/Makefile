@@ -14,6 +14,8 @@ all:
 
 pp: pp.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
+ppPendulum: ppPendulum.o pendulum.o ODEsolver.o
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 bf1: bf1.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 fix: fix.o $(BASE_O)

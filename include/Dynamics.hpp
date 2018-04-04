@@ -62,8 +62,8 @@ public:
   void addPhaseDiff(double val){ phaseDiff+= val;}
 
   // Printer
-  void printT(FILE *fp){ fprintf(fp,"%+.12lf ",t+phaseDiff);}
-  void printX(FILE *fp, int num){
+  void printT(FILE *fp) const{ fprintf(fp,"%+.12lf ",t+phaseDiff);}
+  void printX(FILE *fp, int num) const{
     for(int i = 0; i < num; i++) fprintf(fp,"%+.12lf ",x[i]);
   }
   
@@ -115,6 +115,33 @@ public:
   void printValue(FILE *fp) const{
     for(int i = 0; i < DIM; i++) fprintf(fp,"%+.12lf ",value[i]);
   }
+};
+
+class Interval{
+private:
+  double min, max;
+public:
+  Interval(){}
+  Interval(double inMin, double inMax){
+    min = inMin;
+    max = inMax;
+  }
+  ~Interval(){}
+};
+
+class Domain{
+private:
+  Interval* intArray;
+public:
+  Domain(int dim){
+    intArray = new Interval[dim]();
+  };
+  ~Domain(){
+    delete intArray;
+  }
+  
+  
+
 };
 
 class Dynamics{

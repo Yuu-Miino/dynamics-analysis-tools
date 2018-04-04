@@ -48,28 +48,39 @@ void ODEsolver::RK4(Dynamics& dyna,
   }
 }
 
-void ODEsolver::runODEsolver(Dynamics& dyna, 
-		       const State& init, const Parameter& para, double tfinal, 
-		       State& next,bool printFlag)
+void ODEsolver::runODEsolver(Dynamics& dyna,
+			     const State& init, const Parameter& para, double tfinal, 
+			     State& dst, FILE* printDist,int printDim)
 {
-  State current = init;
+  State current(init), next(init);
   bool FINISH = false;
 
+  if(printDim == -1) printDim = init.getDIM();
+
+  // if print the orbit
+  if(printDist != NULL){
+    init.printT(printDist); init.printX(printDist,printDim);
+    fprintf(printDist,"\n");
+  }
+
+  // main loop
   while(!FINISH){
     stepODEsolver(dyna,current,para,next);
     
-    if((next.getT() - current.getT())*(h/fabs(h)) > ZERO){
+    if((next.getT() - tfinal)*(h/fabs(h)) > ZERO){
       h = tfinal - current.getT();
       stepODEsolver(dyna,current,para,next);
       h = initStep;
       FINISH = true;
     }
 
-    if(printFlag){
-      next.printT(stdout);
-      next.printX(stdout,next.getDIM());
-      printf("\n");
-    }
     current = next;
+    // if print the orbit
+    if(printDist != NULL){
+      current.printT(printDist);
+      current.printX(printDist,printDim);
+      fprintf(printDist,"\n");
+    }
   }
+  dst = next;
 }

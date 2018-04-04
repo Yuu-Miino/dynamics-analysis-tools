@@ -35,8 +35,11 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
-  getFromFile(init,2,para,mode,infile);
+
+  //------- Hybrid System Settings ------//
+  getFromFileWithMode(init,2,para,mode,infile);
   HybridSystem hs(mode);
+  //------- Hybrid System Settings ------//
 
   fpPoin  = fopen((infile+".pp.poin").c_str(),"w");
   fpOrbit = fopen((infile+".pp.orbit").c_str(),"w");

@@ -2,7 +2,7 @@
 // Class member functions
 void HSODEsolver::runHSODEsolver(ModeProperty& mode, 
 				 const State& init, const Parameter& para, double tfinal, 
-				 StateWithEvent& out, FILE* fp, int printDim)
+				 StateWithEvent& out, FILE* printDist, int printDim)
 {
   int dim   = init.getDIM();
   if(printDim == -1) printDim = dim;
@@ -14,10 +14,10 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
   bool FINISH = false, grazeFlag = false, newtonFlag = true, eventFIN = false;
   int index, dir;
 
-  // if print the orbit in stdout
-  if(fp != NULL){
-    next.printT(fp); next.printX(fp,printDim);
-    fprintf(fp,"%d\n",mode.getMode());
+  // if print the orbit
+  if(printDist != NULL){
+    init.printT(printDist); init.printX(printDist,printDim);
+    fprintf(printDist,"%d\n",mode.getMode());
   }
 
   // main loop
@@ -96,9 +96,10 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
       }
     }
     
-    if((fp != NULL) && newtonFlag){
-      next.printT(fp); next.printX(fp,printDim);
-      fprintf(fp,"%d\n",mode.getMode());
+    // if print the orbit
+    if((printDist != NULL) && newtonFlag){
+      next.printT(printDist); next.printX(printDist,printDim);
+      fprintf(printDist,"%d\n",mode.getMode());
     }
     current = next;
   }// for "while(!FINISH)"

@@ -1,8 +1,8 @@
 #ifndef _ODE_SOLVER_
 #define _ODE_SOLVER_
 
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <math.h>
 #include <string>
 
 #include"Dynamics.hpp"
@@ -33,7 +33,7 @@ public:
 		     State& next);
   void runODEsolver(Dynamics& dyna, 
 		    const State& init, const Parameter& para, double tfinal, 
-		    State& next,bool printFlag=false);
+		    State& next, FILE* printDist=NULL, int printDim=-1);
 };
 
 
