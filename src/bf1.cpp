@@ -50,7 +50,7 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
-  getFromFile(init,2,para,mode,infile);
+  getFromFileWithMode(init,2,para,mode,infile);
   HybridSystem hs(mode);
   startVal = para.getValue(paraIndex);
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv){
     fprintf(stderr,"mode: %d | ",hs.getMode()); 
     para.printValue(stderr); fprintf(stderr," | ");
     init.printT(stderr); 
-    init.printX(stderr,STATE_DIM); 
+    init.printX(stderr,PRINT_DIM); 
     fprintf(stderr,"\r");
     for(int mapCount = 0; mapCount <= abs(countOfMaps); mapCount++){
       hs.map(init,para,2.0*M_PI,dst,NULL);

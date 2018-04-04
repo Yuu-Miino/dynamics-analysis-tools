@@ -5,8 +5,7 @@ INC = ./include/
 .PHONY: all clean
 .IGNORE: clean
 
-all:
-	@echo "No target is set."
+all: pp ppPendulum bf1 fix bf2
 
 pp:
 	make -C $(SRC) $@

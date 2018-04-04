@@ -19,15 +19,12 @@ using namespace Eigen;
 int main(int argc, char **argv){
   // Help message
   if(argc < 2 || !strcmp("--help",argv[1])){
-    fprintf(stderr,"usage:\t./bf \
-                    [-p <period>] [-i <paramter_index>] [-G | -I] \
-                    [-C <parameter_index> [-s <parameter_step>]] \
-                    filename\n");
+    fprintf(stderr,"usage:\t./bf2 [-p <period>] [-i <paramter_index>] [-G | -I] [-C <parameter_index> [-s <parameter_step>]] filename\n");
     return 0;
   }
 
   // Variables definition
-  FILE *fpJac, *fpPt, *fpCont;
+  FILE *fpPt, *fpCont;
   ofstream ofsLog;
   int period = 1;
   State init[3]= {STATE_DIM,STATE_DIM,STATE_DIM};
@@ -74,13 +71,12 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
-  getFromFile(init[0],2,para,mode,infile);
+  getFromFileWithMode(init[0],2,para,mode,infile);
   HybridSystem hs(mode);
   init[0].setX(JAC_MAT_DIM,1);
   init[0].setX(JAC_MAT_DIM+4,1);
   init[0].setX(JAC_MAT_DIM+8,1);
 
-  fpJac  = fopen((infile+".bf2.jac").c_str(),"w");
   fpPt   = fopen((infile+".bf2.pt").c_str(),"w");
   if(contFlag){
     char str[20];
@@ -102,13 +98,11 @@ int main(int argc, char **argv){
   fprintf(stderr,"\n");
 
   // Print arguments
-  printArg(fpJac,argc,argv);
   printArg(fpPt,argc,argv);
   if(contFlag){
     printArg(fpCont,argc,argv);
     fprintf(fpCont,"# k b0 b x0 y0 mode norm(mu1) norm(mu2) arg(mu1) arg(mu2)\n");
   }
-  long int posJac = ftell(fpJac);
   long int posPt  = ftell(fpPt);
 
   // Main loop
@@ -172,10 +166,7 @@ int main(int argc, char **argv){
 	cerr<<"MU: "<<eig.eigenvalues().format(oneline);
 	
 	// Print results
-	fseek(fpJac,posJac,SEEK_SET);
 	fseek(fpPt,posPt,SEEK_SET);
-	fprintf(fpJac,"%+.12lf %+.12lf\n%+.12lf %+.12lf",
-		jac[0](0,0),jac[0](0,1),jac[0](1,0),jac[0](1,1));
 	para.printValue(fpPt);
 	init[0].printX(fpPt,PRINT_DIM);
 	fprintf(fpPt,"%d",hs.getMode());
@@ -206,7 +197,6 @@ int main(int argc, char **argv){
     para.addValue(contParaIndex,paraStep);
   }// End of continuation loop
 
-  fclose(fpJac);
   fclose(fpPt);
   if(contFlag) fclose(fpCont);
   fprintf(stderr,"\n=============== BF program ===============\n");

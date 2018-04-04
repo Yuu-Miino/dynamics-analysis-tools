@@ -52,7 +52,7 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
-  getFromFile(init,2,para,mode,infile);
+  getFromFileWithMode(init,2,para,mode,infile);
   HybridSystem hs(mode);
   init.setX(JAC_MAT_DIM,1);
   init.setX(JAC_MAT_DIM+4,1);
@@ -60,7 +60,7 @@ int main(int argc, char **argv){
 
   fpJac  = fopen((infile+".fix.jac").c_str(),"w");
   fpPt   = fopen((infile+".fix.pt").c_str(),"w");
-  fpCont = fopen((infile+".fix.cont").c_str(),"w");
+  if(contFlag) fpCont = fopen((infile+".fix.cont").c_str(),"w");
   ofsLog.open(infile+".fix.log");
 
   // Display informations
@@ -142,8 +142,6 @@ int main(int argc, char **argv){
 	fprintf(fpPt,"%d",hs.getMode());
 
 	if(contFlag){
-	  fprintf(stderr,"\e[m\n");
-
 	  para.printValue(fpCont);
 	  init.printX(fpCont,PRINT_DIM);
 	  fprintf(fpCont,"%d ",hs.getMode());
@@ -151,6 +149,7 @@ int main(int argc, char **argv){
 		  norm(eig.eigenvalues()(0)),norm(eig.eigenvalues()(1)),arg(eig.eigenvalues()(0)),arg(eig.eigenvalues()(1)));
 	  fprintf(fpCont,"\n");
 	}
+	fprintf(stderr,"\e[m\n");
 	break;
       }
     
