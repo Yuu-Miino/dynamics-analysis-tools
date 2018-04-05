@@ -22,8 +22,8 @@ int main(int argc, char **argv){
   int mode;
 
   int paraIndex = 0;
-  double startVal, endVal; bool endValFlag = true;
-  int resolution=100;
+  double startVal, endVal; bool endValFlag = false;
+  int resolution = 100;
 
   // Options
   int opt; opterr = 0;
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
       break;
     case 'e':
       endVal = atof(optarg);
-      endValFlag = false;
+      endValFlag = true;
       break;
     case 'r':
       resolution = atoi(optarg);
@@ -68,7 +68,7 @@ int main(int argc, char **argv){
   fprintf(stderr,"resolution\t: %d\n",resolution);
   fprintf(stderr,"\n");
 
-  if(endValFlag){
+  if(!endValFlag){
     fprintf(stderr,"Set the end value of parameter continuation: "); std::cin>>endVal;
     fprintf(stderr,"\n");
   }

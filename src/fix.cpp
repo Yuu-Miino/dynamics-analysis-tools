@@ -32,18 +32,25 @@ int main(int argc, char **argv){
   MatrixXd jac, jacP, df(FIX_MAT_DIM,FIX_MAT_DIM);
   VectorXd f(FIX_MAT_DIM), h(FIX_MAT_DIM);
 
-  bool contFlag = false;
+  bool contFlag = false, endValFlag = false;
   double endVal = 0, paraStep   = 0;
-  int paraIndex = 0, resolution = 0;
+  int paraIndex = 0, resolution = 100;
 
   // Options
   int opt; opterr = 0;
-  while ((opt = getopt(argc, argv, "p:C:")) != -1) {
+  while ((opt = getopt(argc, argv, "p:C:e:r:")) != -1) {
     switch(opt){
     case 'p':
       period = atoi(optarg);
       break;
     case 'C': paraIndex = atoi(optarg); contFlag = true; break;
+    case 'e':
+      endVal = atof(optarg);
+      endValFlag = true;
+      break;
+    case 'r':
+      resolution = atoi(optarg);
+      break;
     default:
       printf("warning: undefined option is selected. %d\n",opt);
       break;
@@ -73,9 +80,10 @@ int main(int argc, char **argv){
   fprintf(stderr,"\n");
   
   if(contFlag){
-    fprintf(stderr,"Set the end value  of parameter continuation: "); std::cin>>endVal;
-    fprintf(stderr,"Set the resolution of parameter continuation: "); std::cin>>resolution;
-    fprintf(stderr,"\n");
+    if(!endValFlag){
+      fprintf(stderr,"Set the end value  of parameter continuation: "); std::cin>>endVal;
+      fprintf(stderr,"\n");
+    }
     paraStep = (endVal - para.getValue(paraIndex))/(double)resolution;    
   }
 
