@@ -1,6 +1,6 @@
 #include "HSODEsolver.hpp"
 // Class member functions
-void HSODEsolver::runHSODEsolver(ModeProperty& mode, 
+bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
 				 const State& init, const Parameter& para, double tfinal, 
 				 StateWithEvent& out, FILE* printDist, int printDim)
 {
@@ -11,7 +11,7 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
   double ef0[efnum], ef1[efnum], defdt[efnum];;
   double dxdt[dim];
   State current(init), next(init);
-  bool FINISH = false, grazeFlag = false, newtonFlag = true, eventFIN = false;
+  bool finFlag = false, grazeFlag = false, newtonFlag = true, eventFIN = false, divFlag = false;
   int index, dir;
 
   // if print the orbit
@@ -21,13 +21,15 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
   }
 
   // main loop
-  while(!FINISH){
+  while(!finFlag && !divFlag){
     index = -1; dir = 0;
 
     for(unsigned int i = 0; i < efnum; i++){
       ef0[i]=0.0; ef1[i]=0.0;
     }
     stepODEsolver(*mode.dyna,current,para,next);
+    if(!domain.inDomain(next)) divFlag = true;
+
     if(!teventFlag){
       eventDetect(mode, current, ef0, next, ef1, para, &index, &dir);
     }else{
@@ -39,11 +41,11 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
       h = initStep;
 
       *out.state  = next;
-      FINISH = true;
+      finFlag = true;
 
       eventDetect(mode, current, ef0, next, ef1, para, &index, &dir);
       if(index >= 0){// if an event is detected
-	FINISH = false;
+	finFlag = false;
       }
     }
 
@@ -91,7 +93,7 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
 	  out.eventFlag  = true;
 	  out.eventIndex = index;
 	  out.eventDir   = dir;
-	  FINISH = true;
+	  finFlag = true;
 	}
       }
     }
@@ -102,7 +104,8 @@ void HSODEsolver::runHSODEsolver(ModeProperty& mode,
       fprintf(printDist,"%d\n",mode.getMode());
     }
     current = next;
-  }// for "while(!FINISH)"
+  }// for "while(!finFlag)"
+  return divFlag;
 }
 
 void HSODEsolver::eventDetect(ModeProperty& mode, 

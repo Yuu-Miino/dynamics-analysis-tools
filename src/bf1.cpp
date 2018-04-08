@@ -50,10 +50,13 @@ int main(int argc, char **argv){
 
   // Initializations
   string infile = argv[optind];
+
+  
   getFromFileWithMode(init,2,para,mode,infile);
   HybridSystem hs(mode);
-  startVal = para.getValue(paraIndex);
 
+
+  startVal = para.getValue(paraIndex);
   fpOut  = fopen((infile+".bf1").c_str(),"w");
 
   // Display informations

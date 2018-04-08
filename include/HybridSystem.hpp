@@ -23,12 +23,16 @@ public:
   }
 
   // Poincare map
-  void map(const State& inInit, const Parameter& inPara, 
+  bool map(const State& inInit, const Parameter& inPara, 
 	   double tfinal, State& dst, FILE* printDist=NULL){
     // Variables definition
     State init(inInit);
+    bool divFlag = false;
     HSODEsolver odeSolver("RK4",((tfinal-init.getT()) > ZERO ? 1.0:-1.0)*1e-2);
     StateWithEvent swe(init.getDIM());
+    Domain domain(2);
+    domain.setInterval(0,-5,5);
+    domain.setInterval(1,-5,5);
     
     // If out of domain
     if(!mp[mode]->inDomain(init, inPara)){
@@ -38,8 +42,8 @@ public:
     }
 
     // Main loop
-    while(1){
-      odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe, printDist, PRINT_DIM);
+    while(!divFlag){
+      divFlag = odeSolver.runHSODEsolver(*mp[mode], domain, init, inPara, tfinal, swe, printDist, PRINT_DIM);
       init = *swe.state;
       if(swe.eventFlag){
 	mode = mp[mode]->modeDist(swe.eventIndex);
@@ -51,6 +55,7 @@ public:
       }
     }
     dst = init;
+    return divFlag;
   }
   void jacobian(MatrixXd& jac, MatrixXd& jacP, int period,
 		const State& inInit, const Parameter& inPara, 
@@ -62,6 +67,7 @@ public:
     State init(inInit);
     HSODEsolver odeSolver("RK4",((tfinal-init.getT()) > ZERO ? 1.0:-1.0)*1e-2);
     StateWithEvent swe(init.getDIM());
+    Domain domain(2);
 
     double dxdt[init.getDIM()];
     
@@ -82,7 +88,7 @@ public:
 	  if(i == JAC_MAT_DIM || i == JAC_MAT_DIM + 4 || i == JAC_MAT_DIM + 8)
 	    init.setX(i,1);
 	}
-	odeSolver.runHSODEsolver(*mp[mode], init, inPara, tfinal, swe);
+	odeSolver.runHSODEsolver(*mp[mode], domain, init, inPara, tfinal, swe);
 	init = *swe.state;
 
 	mp[mode]->dyna->ode(dxdt, init, inPara);

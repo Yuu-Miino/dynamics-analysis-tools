@@ -71,7 +71,7 @@ public:
   }
   ~HSODEsolver(){};
 
-  void runHSODEsolver(ModeProperty& mode, 
+  bool runHSODEsolver(ModeProperty& mode, const Domain& domain,
 		      const State& init, const Parameter& para, double tfinal,
 		      StateWithEvent& out, FILE* printDist=NULL, int printDim=-1);
   void eventDetect(ModeProperty& mode, 

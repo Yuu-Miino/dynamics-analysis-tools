@@ -7,8 +7,6 @@
 
 #include"Dynamics.hpp"
 
-#define ZERO 1e-16
-
 class ODEsolver
 {
 private:
@@ -31,7 +29,7 @@ public:
   void stepODEsolver(Dynamics& dyna, 
 		     const State& current, const Parameter& para, 
 		     State& next);
-  void runODEsolver(Dynamics& dyna, 
+  bool runODEsolver(Dynamics& dyna, const Domain& domain,
 		    const State& init, const Parameter& para, double tfinal, 
 		    State& next, FILE* printDist=NULL, int printDim=-1);
 };

@@ -19,6 +19,7 @@ int main(int argc, char **argv){
   State init(STATE_DIM), dst(STATE_DIM);
   Parameter para(PARA_DIM);
   int mode;
+  bool divFlag = false;
 
   // Options
   int opt; opterr = 0;
@@ -63,7 +64,10 @@ int main(int argc, char **argv){
     fprintf(stderr,"mode: %d | ",hs.getMode()); 
     init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
-    hs.map(init,para,2.0*M_PI,dst,fpOrbit);
+    if((divFlag = hs.map(init,para,2.0*M_PI,dst,fpOrbit))){
+      fprintf(stderr,"\n\e[41m\e[97mDIVERGENT\e[m\n");
+      break;
+    }
 
     init = dst;
     init.printT(fpPoin);

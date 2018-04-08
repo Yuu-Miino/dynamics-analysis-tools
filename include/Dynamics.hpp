@@ -1,6 +1,8 @@
 #ifndef _DYNAMICS_
 #define _DYNAMICS_
 
+#define ZERO 1e-16
+
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -121,26 +123,94 @@ class Interval{
 private:
   double min, max;
 public:
-  Interval(){}
+  Interval(){
+  }
   Interval(double inMin, double inMax){
     min = inMin;
     max = inMax;
   }
-  ~Interval(){}
+  ~Interval(){
+  }
+
+  bool inInterval(double x){
+    if(min - x < ZERO && ZERO < max - x) return true;
+    return false;
+  }
+
+  // Copy constructor
+  Interval(const Interval& other){
+    min = other.min;
+    max = other.max;
+  }
+
+  // Operator
+  Interval& operator=(const Interval& other){
+    if(this != &other){
+      min = other.min;
+      max = other.max;
+    }
+    return *this;
+  }
+
+  // Accessor
+  void setMin(double inMin){min = inMin;};
+  void setMax(double inMax){max = inMax;};
+  double getMin()const{return min;};
+  double getMax()const{return max;};
 };
 
 class Domain{
 private:
   Interval* intArray;
+  int DIM;
 public:
-  Domain(int dim){
-    intArray = new Interval[dim]();
-  };
+  Domain(){
+    DIM = 2;
+    intArray = new Interval[DIM]();
+    for(int i = 0; i < DIM; i++){
+      intArray[i].setMin(-10);
+      intArray[i].setMax(+10);
+    }
+  }
+  Domain(int inDim){
+    DIM = inDim;
+    intArray = new Interval[DIM]();
+    for(int i = 0; i < DIM; i++){
+      intArray[i].setMin(-10);
+      intArray[i].setMax(+10);
+    }
+  }
   ~Domain(){
-    delete intArray;
+    delete[] intArray;
   }
   
-  
+  bool inDomain (const State& in) const{
+    for(int i = 0; i < DIM; i++){
+      if(!intArray[i].inInterval(in.getX(i)))
+	return false;
+    }
+    return true;
+  }
+
+  // Copy constructor
+  Domain(const Domain& other){
+    DIM = other.DIM;
+    for(int i = 0; i < other.DIM; i++) intArray[i] = other.intArray[i];
+  }
+
+  // Operator
+  Domain& operator=(const Domain& other){
+    if(this != &other){
+      for(int i = 0; i < other.DIM; i++) intArray[i] = other.intArray[i];
+    }
+    return *this;
+  }
+
+  // Accessor
+  void setInterval(int index, double inMin, double inMax){
+    intArray[index].setMin(inMin);
+    intArray[index].setMax(inMax);
+  }
 
 };
 

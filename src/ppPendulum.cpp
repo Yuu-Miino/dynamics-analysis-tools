@@ -22,6 +22,10 @@ int main(int argc, char **argv){
   pendulum  dyna;
   ODEsolver ode("RK4",1e-2);
   double tfinal = 2.0 * M_PI;
+  Domain domain(2);
+  domain.setInterval(0,-5,5);
+  domain.setInterval(1,-5,5);
+  bool divFlag = false;
 
   // Options
   int opt; opterr = 0;
@@ -61,7 +65,10 @@ int main(int argc, char **argv){
 	    (double)mapCount*100/(double)countOfMaps,mapCount);
     init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
-    ode.runODEsolver(dyna,init,para,tfinal,dst,fpOrbit);
+    if(divFlag = ode.runODEsolver(dyna,domain,init,para,tfinal,dst,fpOrbit)){
+      fprintf(stderr,"\n\e[41m\e[97mDIVERGENT\e[m\n");
+      break;
+    }
 
     init = dst;
     init.setT(0);
