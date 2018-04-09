@@ -53,7 +53,7 @@ bool ODEsolver::runODEsolver(Dynamics& dyna, const Domain& domain,
 			     State& dst, FILE* printDist,int printDim)
 {
   State current(init), next(init);
-  bool finFlag = false, divFlag = false;
+  bool isFinish = false, isDivergent = false;
 
   // If print the orbit
   if(printDist != NULL){
@@ -63,16 +63,16 @@ bool ODEsolver::runODEsolver(Dynamics& dyna, const Domain& domain,
   }
 
   // Main loop
-  while(!finFlag && !divFlag){
+  while(!isFinish && !isDivergent){
     stepODEsolver(dyna,current,para,next);
     
-    if(!domain.inDomain(next)) divFlag = true;
+    if(!domain.inDomain(next)) isDivergent = true;
 
     if((next.getT() - tfinal)*(h/fabs(h)) > ZERO){
       h = tfinal - current.getT();
       stepODEsolver(dyna,current,para,next);
       h = initStep;
-      finFlag = true;
+      isFinish = true;
     }
 
     current = next;
@@ -84,5 +84,5 @@ bool ODEsolver::runODEsolver(Dynamics& dyna, const Domain& domain,
     }
   }
   dst = next;
-  return divFlag;
+  return isDivergent;
 }

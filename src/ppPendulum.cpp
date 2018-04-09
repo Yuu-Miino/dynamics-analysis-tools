@@ -65,7 +65,7 @@ int main(int argc, char **argv){
 	    (double)mapCount*100/(double)countOfMaps,mapCount);
     init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
-    if(divFlag = ode.runODEsolver(dyna,domain,init,para,tfinal,dst,fpOrbit)){
+    if((divFlag = ode.runODEsolver(dyna,domain,init,para,tfinal,dst,fpOrbit))){
       fprintf(stderr,"\n\e[41m\e[97mDIVERGENT\e[m\n");
       break;
     }

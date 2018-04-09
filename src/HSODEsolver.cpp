@@ -11,7 +11,7 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
   double ef0[efnum], ef1[efnum], defdt[efnum];;
   double dxdt[dim];
   State current(init), next(init);
-  bool finFlag = false, grazeFlag = false, newtonFlag = true, eventFIN = false, divFlag = false;
+  bool isFinish = false, isGraze = false, useNewton = true, eventFIN = false, isDivergent = false;
   int index, dir;
 
   // if print the orbit
@@ -21,14 +21,20 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
   }
 
   // main loop
-  while(!finFlag && !divFlag){
+  while(!isFinish && !isDivergent){
     index = -1; dir = 0;
 
     for(unsigned int i = 0; i < efnum; i++){
       ef0[i]=0.0; ef1[i]=0.0;
     }
     stepODEsolver(*mode.dyna,current,para,next);
-    if(!domain.inDomain(next)) divFlag = true;
+    if(!domain.inDomain(next)){
+      *out.state  = next;
+      isDivergent = true;
+      fprintf(stderr,"\ntrue!!\n");
+      next.printT(stderr); next.printX(stderr,printDim);
+      fprintf(stderr,"\n");
+    }
 
     if(!teventFlag){
       eventDetect(mode, current, ef0, next, ef1, para, &index, &dir);
@@ -41,21 +47,21 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
       h = initStep;
 
       *out.state  = next;
-      finFlag = true;
+      isFinish = true;
 
       eventDetect(mode, current, ef0, next, ef1, para, &index, &dir);
       if(index >= 0){// if an event is detected
-	finFlag = false;
+	isFinish = false;
       }
     }
 
     if(index >= 0){
-      if(newtonFlag){// Newton's method
+      if(useNewton){// Newton's method
 	while(fabs(ef1[index]) > EEPS){
 	  mode.dyna->ode(dxdt, current, para);
 	  mode.dEFdt(defdt, current, para, dxdt);
 	  if(fabs(defdt[index]) < 1e-3){
-	    grazeFlag = true;
+	    isGraze = true;
 	    break;
 	  }
 	  h = -(ef1[index])/defdt[index];
@@ -64,7 +70,7 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
 	  current = next;
 	  mode.eventFunction(ef1, current, para);
 	}
-	if(!grazeFlag) eventFIN = true;
+	if(!isGraze) eventFIN = true;
 
       }else{ // Bisection method
 	if(fabs(ef1[index]) > EEPS){
@@ -74,15 +80,15 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
 	}
       }
     
-      if(grazeFlag){// Newton's method -> Bisection method
-	grazeFlag = false;
-	newtonFlag = false;
+      if(isGraze){// Newton's method -> Bisection method
+	isGraze = false;
+	useNewton = false;
 	h = initStep/2.0;
       }
 
       if(eventFIN){
 	eventFIN   = false;
-	newtonFlag = true;
+	useNewton = true;
 	teventFlag = true;
 
 	h = initStep;
@@ -93,19 +99,19 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
 	  out.eventFlag  = true;
 	  out.eventIndex = index;
 	  out.eventDir   = dir;
-	  finFlag = true;
+	  isFinish = true;
 	}
       }
     }
     
     // if print the orbit
-    if((printDist != NULL) && newtonFlag){
+    if((printDist != NULL) && useNewton){
       next.printT(printDist); next.printX(printDist,printDim);
       fprintf(printDist,"%d\n",mode.getMode());
     }
     current = next;
-  }// for "while(!finFlag)"
-  return divFlag;
+  }// for "while(!isFinish)"
+  return isDivergent;
 }
 
 void HSODEsolver::eventDetect(ModeProperty& mode, 

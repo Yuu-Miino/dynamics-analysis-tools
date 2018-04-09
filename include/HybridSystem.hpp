@@ -27,7 +27,7 @@ public:
 	   double tfinal, State& dst, FILE* printDist=NULL){
     // Variables definition
     State init(inInit);
-    bool divFlag = false;
+    bool isDivergent = false;
     HSODEsolver odeSolver("RK4",((tfinal-init.getT()) > ZERO ? 1.0:-1.0)*1e-2);
     StateWithEvent swe(init.getDIM());
     Domain domain(2);
@@ -42,8 +42,8 @@ public:
     }
 
     // Main loop
-    while(!divFlag){
-      divFlag = odeSolver.runHSODEsolver(*mp[mode], domain, init, inPara, tfinal, swe, printDist, PRINT_DIM);
+    while(!isDivergent){
+      isDivergent = odeSolver.runHSODEsolver(*mp[mode], domain, init, inPara, tfinal, swe, printDist, PRINT_DIM);
       init = *swe.state;
       if(swe.eventFlag){
 	mode = mp[mode]->modeDist(swe.eventIndex);
@@ -55,7 +55,7 @@ public:
       }
     }
     dst = init;
-    return divFlag;
+    return isDivergent;
   }
   void jacobian(MatrixXd& jac, MatrixXd& jacP, int period,
 		const State& inInit, const Parameter& inPara, 

@@ -65,7 +65,9 @@ int main(int argc, char **argv){
     init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
     if((divFlag = hs.map(init,para,2.0*M_PI,dst,fpOrbit))){
-      fprintf(stderr,"\n\e[41m\e[97mDIVERGENT\e[m\n");
+      fprintf(stderr,"\n\e[41m\e[97mDIVERGENT: ");
+      dst.printT(stderr); dst.printX(stderr,PRINT_DIM);
+      fprintf(stderr,"\e[m\n");
       break;
     }
 

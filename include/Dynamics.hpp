@@ -26,17 +26,17 @@ public:
   State(const State& other){
     DIM = other.DIM;
     x = new double[DIM]();
-    setT(other.t);
-    for(int i = 0; i < other.DIM; i++) setX(i, other.getX(i));
-    setPhaseDiff(other.phaseDiff);
+    t = other.t;
+    for(int i = 0; i < other.DIM; i++) x[i] =  other.x[i];
+    phaseDiff = other.phaseDiff;
   }
   
   // Operator
   State& operator=(const State& other){
     if(this != &other){
-      setT(other.t);
-      for(int i = 0; i < other.DIM; i++) setX(i, other.getX(i));
-      setPhaseDiff(other.phaseDiff);
+      t = other.t;
+      for(int i = 0; i < other.DIM; i++) x[i] =  other.x[i];
+      phaseDiff = other.phaseDiff;
     }
     return *this;
   }
@@ -153,6 +153,7 @@ public:
   }
 
   // Accessor
+  void setInterval(double inMin, double inMax){min = inMin; max = inMax;};
   void setMin(double inMin){min = inMin;};
   void setMax(double inMax){max = inMax;};
   double getMin()const{return min;};
@@ -173,12 +174,13 @@ public:
     }
   }
   Domain(int inDim){
+    if(inDim == 1){
+      fprintf(stderr,"warning: selected dimension is unity. Do you want to declare an interval?\n");
+    }
     DIM = inDim;
     intArray = new Interval[DIM]();
-    for(int i = 0; i < DIM; i++){
-      intArray[i].setMin(-10);
-      intArray[i].setMax(+10);
-    }
+    for(int i = 0; i < DIM; i++)
+      intArray[i].setInterval(-10,+10);
   }
   ~Domain(){
     delete[] intArray;
@@ -208,11 +210,11 @@ public:
 
   // Accessor
   void setInterval(int index, double inMin, double inMax){
-    intArray[index].setMin(inMin);
-    intArray[index].setMax(inMax);
+    intArray[index].setInterval(inMin,inMax);
   }
 
 };
+
 
 class Dynamics{
 public:
