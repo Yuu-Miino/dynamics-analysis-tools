@@ -22,6 +22,8 @@ fix: fix.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 bf2: bf2.o $(BASE_O)
 	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
+gz2: gz2.o $(BASE_O)
+	$(CC) -o $(DIST)$@ $(OBJDIR)$^ $(LIBS)
 
 .cpp.o:
 	$(CC) $(INCLUDE) -c $<

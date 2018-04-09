@@ -72,7 +72,7 @@ int main(int argc, char **argv){
   // Initializations
   string infile = argv[optind];
   getFromFileWithMode(init[0],2,para,mode,infile);
-  HybridSystem hs(mode);
+  HybridSystem hs;
   init[0].setX(JAC_MAT_DIM,1);
   init[0].setX(JAC_MAT_DIM+4,1);
   init[0].setX(JAC_MAT_DIM+8,1);
@@ -90,7 +90,7 @@ int main(int argc, char **argv){
   fprintf(stderr,"filename\t: %s\n",argv[optind]);
   fprintf(stderr,"given period\t: %d\n",period);
   fprintf(stderr,"initial values\t: ");  init[0].printX(stderr,2); fprintf(stderr,"\n");
-  fprintf(stderr,"initial mode \t: %d\n",hs.getMode());
+  fprintf(stderr,"initial mode \t: %d\n",mode);
   fprintf(stderr,"parameters\t: ");  para.printValue(stderr);  fprintf(stderr,"\n");
   fprintf(stderr,"\n");
   fprintf(stderr,"parameter index\t: %d\n",paraIndex);
@@ -114,7 +114,7 @@ int main(int argc, char **argv){
       init[2].addX(1,DIFF_EPS);
 
       // Get Jacobian matrix
-      for(int i = 0; i < 3; i++) hs.jacobian(jac[i],jacP[i],period,init[i],para,2.0*M_PI,dst[i]);
+      for(int i = 0; i < 3; i++) hs.jacobian(jac[i],jacP[i],period,init[i],para,mode,2.0*M_PI,dst[i]);
 
       // Derivative of determinant
       for(int i = 1; i < 3; i++){
@@ -158,8 +158,6 @@ int main(int argc, char **argv){
 	if(!contFlag) cerr<<"\n\n";
 	fprintf(stderr,"Finished in %2d loops (error: %e) | ",bfIter,f.norm());
 	para.printValue(stderr); cerr<<" | ";
-	//fprintf(stderr,"mode: %d | ",hs.getMode()); 
-	//init[0].printT(stderr); init[0].printX(stderr,PRINT_DIM); cerr<<" | ";
       
 	ComplexEigenSolver<MatrixXd> eig(jac[0].block<2,2>(0,0));
 	IOFormat oneline(12,DontAlignCols,  "", " , ",  "", "",   "", "");
@@ -169,14 +167,14 @@ int main(int argc, char **argv){
 	fseek(fpPt,posPt,SEEK_SET);
 	para.printValue(fpPt);
 	init[0].printX(fpPt,PRINT_DIM);
-	fprintf(fpPt,"%d",hs.getMode());
+	fprintf(fpPt,"%d ",mode);
 	
 	if(contFlag){
 	  fprintf(stderr,"\r");
 	  
 	  para.printValue(fpCont);
 	  init[0].printX(fpCont,PRINT_DIM);
-	  fprintf(fpCont,"%d ",hs.getMode());
+	  fprintf(fpCont,"%d ",mode);
 	  fprintf(fpCont,"%+.12lf %+.12lf %+.12lf %+.12lf",
 		  norm(eig.eigenvalues()(0)),norm(eig.eigenvalues()(1)),arg(eig.eigenvalues()(0)),arg(eig.eigenvalues()(1)));
 	  fprintf(fpCont,"\n");

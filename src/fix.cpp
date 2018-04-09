@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 
   bool contFlag = false, endValFlag = false;
   double endVal = 0, paraStep   = 0;
-  int paraIndex = 0, resolution = 100;
+  int paraIndex = 0, resolution = 0;
 
   // Options
   int opt; opterr = 0;
@@ -43,7 +43,7 @@ int main(int argc, char **argv){
     case 'p':
       period = atoi(optarg);
       break;
-    case 'C': paraIndex = atoi(optarg); contFlag = true; break;
+    case 'C': paraIndex = atoi(optarg); contFlag = true; resolution = 100; break;
     case 'e':
       endVal = atof(optarg);
       endValFlag = true;
@@ -60,7 +60,7 @@ int main(int argc, char **argv){
   // Initializations
   string infile = argv[optind];
   getFromFileWithMode(init,2,para,mode,infile);
-  HybridSystem hs(mode);
+  HybridSystem hs;
   init.setX(JAC_MAT_DIM,1);
   init.setX(JAC_MAT_DIM+4,1);
   init.setX(JAC_MAT_DIM+8,1);
@@ -75,7 +75,7 @@ int main(int argc, char **argv){
   fprintf(stderr,"filename\t: %s\n",argv[optind]);
   fprintf(stderr,"given period\t: %d\n",period);
   fprintf(stderr,"initial values\t: ");  init.printX(stderr,2); fprintf(stderr,"\n");
-  fprintf(stderr,"initial mode \t: %d\n",hs.getMode());
+  fprintf(stderr,"initial mode \t: %d\n",mode);
   fprintf(stderr,"parameters\t: ");  para.printValue(stderr);  fprintf(stderr,"\n");
   fprintf(stderr,"\n");
   
@@ -102,11 +102,11 @@ int main(int argc, char **argv){
     for(int fixIter = 1; fixIter <= FIX_ITER_MAX; fixIter++){
       // Print info
       fprintf(stderr,"fixIter: %03d | ",fixIter);
-      fprintf(stderr,"mode: %d | ",hs.getMode()); 
+      fprintf(stderr,"mode: %d | ",mode); 
       init.printT(stderr); init.printX(stderr,PRINT_DIM);
 
       // Get Jacobian matrix
-      hs.jacobian(jac,jacP,period,init,para,2.0*M_PI,dst);
+      hs.jacobian(jac,jacP,period,init,para,mode,2.0*M_PI,dst);
 
       // Newton's method
       df = jac.block<2,2>(0,0) - MatrixXd::Identity(2,2);
@@ -147,12 +147,12 @@ int main(int argc, char **argv){
 		jac(0,0),jac(0,1),jac(1,0),jac(1,1));
 	para.printValue(fpPt);
 	init.printX(fpPt,PRINT_DIM);
-	fprintf(fpPt,"%d",hs.getMode());
+	fprintf(fpPt,"%d",mode);
 
 	if(contFlag){
 	  para.printValue(fpCont);
 	  init.printX(fpCont,PRINT_DIM);
-	  fprintf(fpCont,"%d ",hs.getMode());
+	  fprintf(fpCont,"%d ",mode);
 	  fprintf(fpCont,"%+.12lf %+.12lf %+.12lf %+.12lf",
 		  norm(eig.eigenvalues()(0)),norm(eig.eigenvalues()(1)),arg(eig.eigenvalues()(0)),arg(eig.eigenvalues()(1)));
 	  fprintf(fpCont,"\n");

@@ -53,7 +53,7 @@ int main(int argc, char **argv){
 
   
   getFromFileWithMode(init,2,para,mode,infile);
-  HybridSystem hs(mode);
+  HybridSystem hs;
 
 
   startVal = para.getValue(paraIndex);
@@ -64,7 +64,7 @@ int main(int argc, char **argv){
   fprintf(stderr,"filename\t: %s\n",argv[optind]);
   fprintf(stderr,"counts of maps\t: %d\n",countOfMaps);
   fprintf(stderr,"initial values\t: ");  init.printX(stderr,2); fprintf(stderr,"\n");
-  fprintf(stderr,"initial mode \t: %d\n",hs.getMode());
+  fprintf(stderr,"initial mode \t: %d\n",mode);
   fprintf(stderr,"parameters\t: ");  para.printValue(stderr); fprintf(stderr,"\n");
   fprintf(stderr,"\n");
   fprintf(stderr,"parameter index\t: %d\n",paraIndex);
@@ -88,13 +88,13 @@ int main(int argc, char **argv){
     init.setPhaseDiff(0);
 
     fprintf(stderr,"%07.3lf %% (resCount: %03d) ", (double)resCount*100/(double)resolution,resCount);
-    fprintf(stderr,"mode: %d | ",hs.getMode()); 
+    fprintf(stderr,"mode: %d | ",mode);
     para.printValue(stderr); fprintf(stderr," | ");
     init.printT(stderr); 
     init.printX(stderr,PRINT_DIM); 
     fprintf(stderr,"\r");
     for(int mapCount = 0; mapCount <= abs(countOfMaps); mapCount++){
-      hs.map(init,para,2.0*M_PI,dst,NULL);
+      hs.map(init,para,mode,2.0*M_PI,dst,NULL);
 
       init = dst;
       if(mapCount > 10){

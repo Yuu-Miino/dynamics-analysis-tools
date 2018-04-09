@@ -31,9 +31,6 @@ bool HSODEsolver::runHSODEsolver(ModeProperty& mode, const Domain& domain,
     if(!domain.inDomain(next)){
       *out.state  = next;
       isDivergent = true;
-      fprintf(stderr,"\ntrue!!\n");
-      next.printT(stderr); next.printX(stderr,printDim);
-      fprintf(stderr,"\n");
     }
 
     if(!teventFlag){

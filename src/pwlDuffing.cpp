@@ -1,15 +1,15 @@
 #include "pwlDuffing.hpp"
 #include <math.h>
 
+
+
 // Internal function
 double f(double x, double th, unsigned int mode){
-  double th1 = -1.5, th2 = th, th3 = -2, th4 = 0.05;
-
   switch(mode){
-  case 0: return (x * 3.0 + th1);
-  case 1: return (x / 3.0 + th2);
-  case 2: return (x * 3.0 + th3);
-  case 3: return (x / 3.0 + th4);
+  case 0: return (x * 3.0 + TH0);
+  case 1: return (x / 3.0 + th);
+  case 2: return (x * 3.0 + TH2);
+  case 3: return (x / 3.0 + TH3);
   default:
     fprintf(stderr,"Error: undefined mode = %d in pwlDuffing::f\n",mode);
     exit(1);

@@ -16,6 +16,8 @@
 
 #define PRINT_DIM     2
 
+static double TH0 = -1.5, TH1 = 0.25, TH2 = -2, TH3 = 0.05;
+
 // Dynamical system
 class pwlDuffing: public Dynamics{
 private:
@@ -24,6 +26,7 @@ public:
   pwlDuffing(unsigned int inMode);
   ~pwlDuffing(){};
   void ode(double* dxdt, const State& state, const Parameter& para);
+  
 };
 
 // Mode property

@@ -39,7 +39,7 @@ int main(int argc, char **argv){
 
   //------- Hybrid System Settings ------//
   getFromFileWithMode(init,2,para,mode,infile);
-  HybridSystem hs(mode);
+  HybridSystem hs;
   //------- Hybrid System Settings ------//
 
   fpPoin  = fopen((infile+".pp.poin").c_str(),"w");
@@ -50,7 +50,7 @@ int main(int argc, char **argv){
   fprintf(stderr,"filename\t: %s\n",argv[optind]);
   fprintf(stderr,"counts of maps\t: %d\n",countOfMaps);
   fprintf(stderr,"initial values\t: ");  init.printX(stderr,2); fprintf(stderr,"\n");
-  fprintf(stderr,"initial mode \t: %d\n",hs.getMode());
+  fprintf(stderr,"initial mode \t: %d\n",mode);
   fprintf(stderr,"parameters\t: ");  para.printValue(stderr);  fprintf(stderr,"\n\n");
 
   // Print arguments
@@ -61,10 +61,10 @@ int main(int argc, char **argv){
   for(int mapCount = 0; mapCount <= abs(countOfMaps); mapCount++){
     fprintf(stderr,"%07.3lf %% (mapCount: %03d) ",
 	    (double)mapCount*100/(double)countOfMaps,mapCount);
-    fprintf(stderr,"mode: %d | ",hs.getMode()); 
+    fprintf(stderr,"mode: %d | ",mode); 
     init.printT(stderr); init.printX(stderr,PRINT_DIM); fprintf(stderr,"\r");
 
-    if((divFlag = hs.map(init,para,2.0*M_PI,dst,fpOrbit))){
+    if((divFlag = hs.map(init,para,mode,2.0*M_PI,dst,fpOrbit))){
       fprintf(stderr,"\n\e[41m\e[97mDIVERGENT: ");
       dst.printT(stderr); dst.printX(stderr,PRINT_DIM);
       fprintf(stderr,"\e[m\n");
@@ -74,7 +74,7 @@ int main(int argc, char **argv){
     init = dst;
     init.printT(fpPoin);
     init.printX(fpPoin,PRINT_DIM);
-    fprintf(fpPoin,"%d \n",hs.getMode());
+    fprintf(fpPoin,"%d \n",mode);
   }// End of main loop
 
   fclose(fpOrbit);

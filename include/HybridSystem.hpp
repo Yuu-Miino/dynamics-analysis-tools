@@ -12,23 +12,28 @@ using namespace Eigen;
 class HybridSystem{
 private:
   ModeProperty* mp[MODE_NUM];
-  int mode;
 public:
-  HybridSystem(int inMode=0){
-    mode = inMode;
+  HybridSystem(){
     for(int i = 0; i < MODE_NUM; i++) mp[i] = new pwlDuffingMode(i);
   }
   ~HybridSystem(){
     for(int i = 0; i < MODE_NUM; i++) delete mp[i];
   }
 
+  void eventFunction(double* EF, const State& state, const Parameter& para, const int mode){
+    mp[mode]->eventFunction(EF, state, para);
+  }
+  void dxdt(double* dxdt, const State& in, const Parameter& para, const int mode){
+    mp[mode]->dyna->ode(dxdt, in, para);
+  }
+
   // Poincare map
-  bool map(const State& inInit, const Parameter& inPara, 
+  bool map(const State& inInit, const Parameter& inPara, int& mode,
 	   double tfinal, State& dst, FILE* printDist=NULL){
     // Variables definition
     State init(inInit);
     bool isDivergent = false;
-    HSODEsolver odeSolver("RK4",((tfinal-init.getT()) > ZERO ? 1.0:-1.0)*1e-2);
+    HSODEsolver odeSolver("RK4",((tfinal-init.getT()) > ZERO ? 1.0:-1.0)*1e-3);
     StateWithEvent swe(init.getDIM());
     Domain domain(2);
     domain.setInterval(0,-5,5);
@@ -58,7 +63,7 @@ public:
     return isDivergent;
   }
   void jacobian(MatrixXd& jac, MatrixXd& jacP, int period,
-		const State& inInit, const Parameter& inPara, 
+		const State& inInit, const Parameter& inPara, int& mode,
 		double tfinal, State& dst){
     // Variables definition    
     bool jacPflag = true;
@@ -139,9 +144,6 @@ public:
     }
   }
 
-  // Accessor
-  int getMode() const{return mode;}
-  void setMode(int inMode){ mode = inMode;}
 };
 
 #endif

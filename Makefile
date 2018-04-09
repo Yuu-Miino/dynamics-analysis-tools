@@ -5,7 +5,7 @@ INC = ./include/
 .PHONY: all clean
 .IGNORE: clean
 
-all: pp ppPendulum bf1 fix bf2
+all: pp ppPendulum bf1 fix bf2 gz2
 
 pp:
 	make -C $(SRC) $@
@@ -16,6 +16,8 @@ bf1:
 fix:
 	make -C $(SRC) $@
 bf2:
+	make -C $(SRC) $@
+gz2:
 	make -C $(SRC) $@
 
 clean:
