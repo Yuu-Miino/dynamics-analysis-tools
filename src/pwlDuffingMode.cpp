@@ -20,7 +20,7 @@ pwlDuffingMode::pwlDuffingMode(unsigned int inID):ModeProperty(inID,retNum(inID)
   switch(modeID){
   case 0: eventDir[0] =  1; break;
   case 1: eventDir[0] = -1; eventDir[1] = 1; 
-    eventFlag[1] = false; // For Grazing bifurcation
+    //eventFlag[1] = false; // For Grazing bifurcation
     break;
   case 2: eventDir[0] = -1; break;
   case 3: eventDir[0] = -1; eventDir[1] = 1; break;
@@ -28,8 +28,6 @@ pwlDuffingMode::pwlDuffingMode(unsigned int inID):ModeProperty(inID,retNum(inID)
     fprintf(stderr,"Error: undefined modeID = %d in pwlDuffingEvent(inID)\n",inID);
     exit(1);
   }
-  fprintf(stderr,"# TH: [%lf %lf %lf %lf]\n",
-	  (TH3-TH0)*3.0/8.0,(TH1-TH0)*3.0/8.0,(TH3-TH2)*3.0/8.0,(TH1-TH2)*3.0/8.0);
 }
 
 pwlDuffingMode::~pwlDuffingMode(){
@@ -38,20 +36,25 @@ pwlDuffingMode::~pwlDuffingMode(){
 
 bool pwlDuffingMode::inDomain(const State& state, const Parameter& para){
   double x = state.getX(0);
-  TH1 = para.getValue(3);
+  double th0, th1, th2, th3;
+  th0 = para.getValue(3);
+  th1 = para.getValue(4);
+  th2 = para.getValue(5);
+  th3 = para.getValue(6);
+
 
   switch(modeID){
   case 0: 
-    if(x - (TH1-TH0)*3.0/8.0 > ZERO) return false;
+    if(x - (th1-th0)*3.0/8.0 > ZERO) return false;
     break;
   case 1: 
-    if(x - (TH1-TH0)*3.0/8.0 < ZERO || x - (TH1-TH2)*3.0/8.0 > ZERO) return false; 
+    if(x - (th1-th0)*3.0/8.0 < ZERO || x - (th1-th2)*3.0/8.0 > ZERO) return false; 
     break;
   case 2:
-    if(x - (TH3-TH2)*3.0/8.0 < ZERO) return false;
+    if(x - (th3-th2)*3.0/8.0 < ZERO) return false;
     break;
   case 3:
-    if(x - (TH3-TH2)*3.0/8.0 > ZERO || x - (TH3-TH0)*3.0/8.0 < ZERO) return false;
+    if(x - (th3-th2)*3.0/8.0 > ZERO || x - (th3-th0)*3.0/8.0 < ZERO) return false;
     break;
   default: 
     fprintf(stderr,"Error: undefined modeID = %d in pwlDuffingEvent::inDomain\n",modeID);
@@ -62,22 +65,26 @@ bool pwlDuffingMode::inDomain(const State& state, const Parameter& para){
 
 void pwlDuffingMode::eventFunction(double* EF, const State& state, const Parameter& para){
   double x = state.getX(0);
-  TH1 = para.getValue(3);
+  double th0, th1, th2, th3;
+  th0 = para.getValue(3);
+  th1 = para.getValue(4);
+  th2 = para.getValue(5);
+  th3 = para.getValue(6);
 
   switch(modeID){
   case 0: 
-    EF[0] = x - (TH1-TH0)*3.0/8.0;
+    EF[0] = x - (th1-th0)*3.0/8.0;
     break;
   case 1: 
-    EF[0] = x - (TH1-TH0)*3.0/8.0;
-    EF[1] = x - (TH1-TH2)*3.0/8.0;
+    EF[0] = x - (th1-th0)*3.0/8.0;
+    EF[1] = x - (th1-th2)*3.0/8.0;
     break;
   case 2: 
-    EF[0] = x - (TH3-TH2)*3.0/8.0;
+    EF[0] = x - (th3-th2)*3.0/8.0;
     break;
   case 3: 
-    EF[0] = x - (TH3-TH0)*3.0/8.0;
-    EF[1] = x - (TH3-TH2)*3.0/8.0;
+    EF[0] = x - (th3-th0)*3.0/8.0;
+    EF[1] = x - (th3-th2)*3.0/8.0;
     break;
   default: 
     fprintf(stderr,"Error: undefined modeID = %d in pwlDuffingEvent::eventFunction\n",modeID);

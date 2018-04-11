@@ -112,7 +112,7 @@ int main(int argc, char **argv){
       df = jac.block<2,2>(0,0) - MatrixXd::Identity(2,2);
       f << dst.getX(0) - init.getX(0), dst.getX(1) - init.getX(1);
       h = df.colPivHouseholderQr().solve(f);
-      fprintf(stderr," | %e",f.norm());
+      fprintf(stderr," | %.2e",f.norm());
       fprintf(stderr,"\r");
 
       // Log
@@ -132,12 +132,12 @@ int main(int argc, char **argv){
 	  fprintf(stderr,"\e[41m\e[97m");
 
 	if(!contFlag) cerr<<"\n\n";
-	fprintf(stderr,"Finished in %2d loops (error: %e) | ",fixIter,f.norm());
+	fprintf(stderr,"Finished in %2d loops (error: %.2e) | ",fixIter,f.norm());
 	para.printValue(stderr); cerr<<" | ";
 	//fprintf(stderr,"mode: %d | ",hs.getMode());
 	//init.printT(stderr); init.printX(stderr,PRINT_DIM); cerr<<" | ";      
 
-	IOFormat oneline(12,DontAlignCols,  "", " , ",  "", "",   "", "");
+	IOFormat oneline(8,DontAlignCols,  "", " , ",  "", "",   "", "");
 	cerr<<"MU: "<<eig.eigenvalues().format(oneline);
 	
 	// Print results

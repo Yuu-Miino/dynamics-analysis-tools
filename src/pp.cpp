@@ -14,7 +14,7 @@ int main(int argc, char **argv){
   }
 
   // Variables definition
-  FILE *fpPoin, *fpOrbit;
+  FILE *fpPoin, *fpOrbit, *fpXth;
   int countOfMaps = 10;
   State init(STATE_DIM), dst(STATE_DIM);
   Parameter para(PARA_DIM);
@@ -44,6 +44,7 @@ int main(int argc, char **argv){
 
   fpPoin  = fopen((infile+".pp.poin").c_str(),"w");
   fpOrbit = fopen((infile+".pp.orbit").c_str(),"w");
+  fpXth   = fopen((infile+".pp.xth").c_str(),"w");
 
   // Display informations
   fprintf(stderr,"=============== PP program ===============\n");
@@ -56,6 +57,8 @@ int main(int argc, char **argv){
   // Print arguments
   printArg(fpOrbit,argc,argv);
   printArg(fpPoin,argc,argv);
+  printArg(fpXth,argc,argv);
+  hs.getXth(fpXth,para);
 
   // Main loop
   for(int mapCount = 0; mapCount <= abs(countOfMaps); mapCount++){
@@ -79,6 +82,7 @@ int main(int argc, char **argv){
 
   fclose(fpOrbit);
   fclose(fpPoin);
+  fclose(fpXth);
   fprintf(stderr,"\n=============== PP program ===============\n");
   return 0;
 }

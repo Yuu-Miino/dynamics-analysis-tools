@@ -88,8 +88,7 @@ int main(int argc, char **argv){
     init.setPhaseDiff(0);
 
     fprintf(stderr,"%07.3lf %% (resCount: %03d) ", (double)resCount*100/(double)resolution,resCount);
-    fprintf(stderr,"mode: %d | ",mode);
-    para.printValue(stderr); fprintf(stderr," | ");
+    fprintf(stderr,"mode: %d | %+.12lf | ",mode,para.getValue(paraIndex));
     init.printT(stderr); 
     init.printX(stderr,PRINT_DIM); 
     fprintf(stderr,"\r");
@@ -97,12 +96,11 @@ int main(int argc, char **argv){
       hs.map(init,para,mode,2.0*M_PI,dst,NULL);
 
       init = dst;
-      if(mapCount > 10){
-	para.printValue(fpOut);
-	init.printT(fpOut);
-	init.printX(fpOut,STATE_DIM);
-	fprintf(fpOut,"%d \n",mode);
-      }
+
+      para.printValue(fpOut);
+      init.printT(fpOut);
+      init.printX(fpOut,STATE_DIM);
+      fprintf(fpOut,"%d \n",mode);
     }
     fprintf(fpOut,"\n");
   }// End of main loop

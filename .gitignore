@@ -2,6 +2,7 @@
 bin/*.gp
 bin/*.pt*
 bin/tmp.eps
+bin/bfSet
 pdf/
 
 ### https://raw.github.com/github/gitignore/07c730e1fccfe0f92b29e039ba149d20bfb332e7/Global/Emacs.gitignore

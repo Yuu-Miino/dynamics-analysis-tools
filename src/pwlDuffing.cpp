@@ -1,15 +1,19 @@
 #include "pwlDuffing.hpp"
 #include <math.h>
 
-
-
 // Internal function
-double f(double x, double th, unsigned int mode){
+double f(double x, const Parameter& para, unsigned int mode){
+  double th0, th1, th2, th3;
+  th0 = para.getValue(3);
+  th1 = para.getValue(4);
+  th2 = para.getValue(5);
+  th3 = para.getValue(6);
+  
   switch(mode){
-  case 0: return (x * 3.0 + TH0);
-  case 1: return (x / 3.0 + th);
-  case 2: return (x * 3.0 + TH2);
-  case 3: return (x / 3.0 + TH3);
+  case 0: return (x * 3.0 + th0);
+  case 1: return (x / 3.0 + th1);
+  case 2: return (x * 3.0 + th2);
+  case 3: return (x / 3.0 + th3);
   default:
     fprintf(stderr,"Error: undefined mode = %d in pwlDuffing::f\n",mode);
     exit(1);
@@ -34,7 +38,7 @@ pwlDuffing::pwlDuffing(unsigned int inMode){
 }
 
 void pwlDuffing::ode(double* dxdt, const State& state, const Parameter& para){
-  double k, b0, b, theta;
+  double k, b0, b;
   double fx, fxx, fxy, fxz, fxk, fxb0, fxb;
 
   double x = state.getX(0), y = state.getX(1), z = state.getX(2);
@@ -48,8 +52,8 @@ void pwlDuffing::ode(double* dxdt, const State& state, const Parameter& para){
   k  = para.getValue(0);
   b0 = para.getValue(1);
   b  = para.getValue(2);
-  theta = para.getValue(3);
-  fx  = f(x, theta, mode);
+  
+  fx  = f(x, para, mode);
   fxx = df(xx, mode);
   fxy = df(xy, mode);
   fxz = df(xz, mode);
@@ -91,5 +95,4 @@ void pwlDuffing::ode(double* dxdt, const State& state, const Parameter& para){
   dxdt[18] = yb;
   dxdt[19] = -k * yb - fxb - b * sin(z) * zb + cos(z);
   dxdt[20] = 0;
-
 }

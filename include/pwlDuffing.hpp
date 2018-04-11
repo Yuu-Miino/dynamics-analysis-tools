@@ -7,7 +7,7 @@
 #define MODE_NUM  4
 
 #define STATE_DIM  21
-#define PARA_DIM   4
+#define PARA_DIM   7
 #define JAC_MAT_DIM 3
 #define JAC_PARA_DIM 3
 
@@ -15,8 +15,6 @@
 #define TIME_STATE_INDEX  2 // t
 
 #define PRINT_DIM     2
-
-static double TH0 = -1.5, TH1 = 0.25, TH2 = -2, TH3 = 0.05;
 
 // Dynamical system
 class pwlDuffing: public Dynamics{

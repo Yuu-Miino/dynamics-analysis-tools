@@ -20,6 +20,18 @@ public:
     for(int i = 0; i < MODE_NUM; i++) delete mp[i];
   }
 
+  // Additional function
+  void getXth(FILE *fp, const Parameter& para){
+    double th0, th1, th2, th3;
+    th0 = para.getValue(3);
+    th1 = para.getValue(4);
+    th2 = para.getValue(5);
+    th3 = para.getValue(6);
+    
+    fprintf(fp,"%lf %lf %lf %lf ",
+	    (th3-th0)*3.0/8.0,(th1-th0)*3.0/8.0,(th3-th2)*3.0/8.0,(th1-th2)*3.0/8.0);
+  };
+
   void eventFunction(double* EF, const State& state, const Parameter& para, const int mode){
     mp[mode]->eventFunction(EF, state, para);
   }
